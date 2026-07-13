@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Minus, Plus } from 'lucide-react';
 import { BrandLogo } from '../../utils/brandLogos';
+import { formatPrice } from '../../utils/formatPrice';
 
 interface Product {
   id: string;
@@ -133,7 +134,7 @@ export default function ProductModal({ product, isOpen, onClose, onAddToCart }: 
                   </button>
                 </div>
                 <div className="text-2xl font-black text-white">
-                  ${(product.price * quantity).toLocaleString('es-AR')}
+                  ${formatPrice(product.price * quantity)}
                 </div>
               </div>
 

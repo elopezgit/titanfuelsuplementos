@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../../lib/supabase';
 import { X, Clock, ChefHat, CheckCircle2, XCircle, BellRing } from 'lucide-react';
+import { formatPrice } from '../../utils/formatPrice';
 
 interface OrderTrackerModalProps {
   orderId: string | null;
@@ -135,7 +136,7 @@ export default function OrderTrackerModal({ orderId, isOpen, onClose, onClearAct
 
             <div className="p-5 border-t border-amber-200 bg-white/50 text-center">
               <p className="text-xs text-slate-500 uppercase tracking-widest font-bold mb-1">Orden #{orderId?.split('-')[0].toUpperCase()}</p>
-              <p className="text-sm font-medium text-slate-700">Total del pedido: <span className="font-bold text-slate-900">${total.toLocaleString('es-AR')}</span></p>
+              <p className="text-sm font-medium text-slate-700">Total del pedido: <span className="font-bold text-slate-900">${formatPrice(total)}</span></p>
             </div>
             
           </motion.div>

@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 import { getEmpresaId } from '../lib/getEmpresa';
 import { useCart } from '../lib/CartContext';
 import { Search, Plus, Minus, Trash2, Wallet, CreditCard, Send, Coffee, Utensils } from 'lucide-react';
+import { formatPrice, roundUpPrice } from '../utils/formatPrice';
 
 interface Category {
   id: string;
@@ -54,7 +55,12 @@ export default function POSHome({ empresaSlug }: { empresaSlug: string }) {
         ]);
 
         if (cats.data) setCategories(cats.data);
-        if (prods.data) setProducts(prods.data);
+        if (prods.data) {
+          setProducts(prods.data.map((p: any) => ({
+            ...p,
+            price: roundUpPrice(p.price)
+          })));
+        }
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -197,7 +203,7 @@ export default function POSHome({ empresaSlug }: { empresaSlug: string }) {
                     )}
                   </div>
                   <h3 className="font-bold text-slate-800 text-sm leading-tight mb-1 line-clamp-2 flex-1">{product.name}</h3>
-                  <p className="font-black text-slate-800">${product.price.toLocaleString('es-AR')}</p>
+                  <p className="font-black text-slate-800">${formatPrice(product.price)}</p>
                 </div>
               );
             })}
@@ -233,7 +239,7 @@ export default function POSHome({ empresaSlug }: { empresaSlug: string }) {
                 <div key={item.id} className="bg-slate-50 rounded-lg p-3 border border-slate-100 group">
                   <div className="flex justify-between items-start mb-1">
                     <h4 className="font-bold text-sm text-slate-800 flex-1 pr-2">{item.name}</h4>
-                    <span className="font-black text-sm text-slate-800">${(item.price * item.quantity).toLocaleString('es-AR')}</span>
+                    <span className="font-black text-sm text-slate-800">${formatPrice(item.price * item.quantity)}</span>
                   </div>
                   
                   <input
@@ -269,7 +275,7 @@ export default function POSHome({ empresaSlug }: { empresaSlug: string }) {
         <div className="p-4 bg-slate-50 border-t border-slate-200">
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm font-bold text-slate-500 uppercase">Total Final</span>
-            <span className="text-3xl font-black text-slate-800 tracking-tight">${total.toLocaleString('es-AR')}</span>
+            <span className="text-3xl font-black text-slate-800 tracking-tight">${formatPrice(total)}</span>
           </div>
 
           <div className="mb-4">
@@ -334,7 +340,7 @@ export default function POSHome({ empresaSlug }: { empresaSlug: string }) {
                       )}
                     </div>
                     <div className="font-black text-slate-800">
-                      ${(item.price * item.quantity).toLocaleString('es-AR')}
+                      ${formatPrice(item.price * item.quantity)}
                     </div>
                   </li>
                 ))}
@@ -357,7 +363,7 @@ export default function POSHome({ empresaSlug }: { empresaSlug: string }) {
               </div>
               <div className="flex justify-between items-center mb-6">
                 <span className="text-lg font-bold text-slate-800">Total a Cobrar:</span>
-                <span className="text-4xl font-black text-primary">${total.toLocaleString('es-AR')}</span>
+                <span className="text-4xl font-black text-primary">${formatPrice(total)}</span>
               </div>
               
               <div className="grid grid-cols-2 gap-3">

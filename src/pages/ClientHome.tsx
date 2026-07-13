@@ -9,6 +9,7 @@ import OrderTrackerModal from '../components/client/OrderTrackerModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BrandLogo } from '../utils/brandLogos';
 import { getEmpresaData } from '../lib/getEmpresa';
+import { formatPrice, roundUpPrice } from '../utils/formatPrice';
 
 interface Empresa {
   id: string;
@@ -167,7 +168,12 @@ export default function ClientHome() {
         ]);
 
         if (cats.data) setCategories(cats.data);
-        if (prods.data) setProducts(prods.data);
+        if (prods.data) {
+          setProducts(prods.data.map((p: any) => ({
+            ...p,
+            price: roundUpPrice(p.price)
+          })));
+        }
         if (bans.data) {
           // Sort banners by sort_order in memory so it doesn't crash if column doesn't exist yet
           const sortedBans = bans.data.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
@@ -774,7 +780,7 @@ export default function ClientHome() {
                           </div>
                           
                           <div className="flex items-center gap-3 mt-1">
-                            <span className="font-black text-white text-lg tracking-tight">${product.price.toLocaleString('es-AR')}</span>
+                            <span className="font-black text-white text-lg tracking-tight">${formatPrice(product.price)}</span>
                             {qty > 0 && (
                               <span className="bg-[#FF1E27]/20 text-[#FF1E27] font-bold text-[10px] px-2.5 py-0.5 rounded-md border border-[#FF1E27]/40 uppercase tracking-wider">
                                 {qty} en pedido

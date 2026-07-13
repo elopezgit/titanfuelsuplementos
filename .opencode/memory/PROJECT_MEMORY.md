@@ -19,11 +19,19 @@ App multi-tenant para pedidos de suplementos. Originalmente "TopeDeBar" (restaur
   - Generado archivo SQL oficial [seed_suplementos.sql](file:///c:/Users/EDC/Desktop/AndresPedidos/sql/seed_suplementos.sql)
 - Actualizado [ClientHome.tsx](file:///c:/Users/EDC/Desktop/AndresPedidos/src/pages/ClientHome.tsx) con soporte para las 9 categorías, filtros por marca y palabras clave rápidas.
 
+## Últimas Acciones (2026-07-13)
+- Implementación de redondeo de precios hacia arriba con números enteros (`Math.ceil`):
+  - Utilidad centralizada `src/utils/formatPrice.ts` (`roundUpPrice` y `formatPrice`).
+  - Aplicado en todas las vistas de clientes (`ClientHome`, `ProductModal`, `CartModal`, `OrderTrackerModal`), POS (`POSHome`) y Panel Admin (`CatalogManager`, `AnalyticsDashboard`).
+- Integración de logotipos de marca oficiales en imagen (`src/utils/brandLogos.tsx`):
+  - Configurado el logo de **NUTRILAB** indicado por el usuario y logotipos oficiales para las demás marcas en un contenedor estilo insignia oficial (`bg-white/95 rounded-lg shadow-md`) con fallback automático a SVG.
+
 ## Decisiones Importantes
 - ADR-001: Migrar de restaurante a suplementos deportivos
 - ADR-002: Mantener multi-tenencia por slug (ya implementada)
 - ADR-003: Identidad visual deportiva de alta intensidad "Titan Fuel Suplementos"
 - ADR-004: Importación 100% fiel del catálogo mayorista Lisa Mayorista (318 productos en 9 categorías)
+- ADR-005: Redondeo de todos los precios del sistema hacia arriba al número entero superior (`Math.ceil`) y visualización de logotipos oficiales en imagen en `BrandLogo`.
 
 ## Pendientes
 - Configurar RLS policies en Supabase

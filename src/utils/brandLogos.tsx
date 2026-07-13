@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface BrandLogoProps {
   brand: string;
@@ -6,14 +6,64 @@ interface BrandLogoProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
+const BRAND_IMAGE_LOGOS: Record<string, string> = {
+  'NUTRILAB': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhcgfosLAAxGFioWUil4z2nYoZPp2D29ZtCKEVETfOxfxEGEU81qpAyG8&s=10',
+  'STAR NUTRITION': 'https://acdn.mitiendanube.com/stores/001/144/598/themes/common/logo-1725540306-1725540306-05658e3981881ceb904df2ecbc5816961725540306.png?0',
+  'ENA SPORT': 'https://upload.wikimedia.org/wikipedia/commons/e/ea/ENA_logo.svg',
+  'ENA': 'https://upload.wikimedia.org/wikipedia/commons/e/ea/ENA_logo.svg',
+  'HOCH SPORT': 'https://hochsport.com/wp-content/uploads/2021/04/logo-hoch.png',
+  'BODY ADVANCED': 'https://bodyadvanced.com.ar/wp-content/uploads/2021/08/logo-ba.png',
+  'GENERATION FIT': 'https://generationfit.com.ar/wp-content/uploads/2023/05/logo-gf.png',
+  'VITAMIN WAY': 'https://vitaminway.com.ar/wp-content/uploads/2020/07/logo-vw.png',
+  'MERVICK': 'https://mervicklab.com/images/logo.png',
+  'XTRENGHT': 'https://xtrenght.com/wp-content/uploads/2020/08/logo-xtrenght.png',
+  'GOLD NUTRITION': 'https://goldnutrition.com.ar/wp-content/uploads/2021/03/logo-gn.png',
+  'NATULIV': 'https://natuliv.com.ar/wp-content/uploads/2020/09/logo-natuliv.png',
+};
+
+const getBrandLogoUrl = (cleanBrand: string): string | null => {
+  if (cleanBrand.includes('NUTRILAB')) return BRAND_IMAGE_LOGOS['NUTRILAB'];
+  if (cleanBrand.includes('STAR NUTRITION') || cleanBrand === 'STAR') return BRAND_IMAGE_LOGOS['STAR NUTRITION'];
+  if (cleanBrand.includes('ENA')) return BRAND_IMAGE_LOGOS['ENA'];
+  if (cleanBrand.includes('HOCH')) return BRAND_IMAGE_LOGOS['HOCH SPORT'];
+  if (cleanBrand.includes('BODY ADVANCED')) return BRAND_IMAGE_LOGOS['BODY ADVANCED'];
+  if (cleanBrand.includes('GENERATION FIT')) return BRAND_IMAGE_LOGOS['GENERATION FIT'];
+  if (cleanBrand.includes('VITAMIN WAY')) return BRAND_IMAGE_LOGOS['VITAMIN WAY'];
+  if (cleanBrand.includes('MERVICK')) return BRAND_IMAGE_LOGOS['MERVICK'];
+  if (cleanBrand.includes('XTRENGHT')) return BRAND_IMAGE_LOGOS['XTRENGHT'];
+  if (cleanBrand.includes('GOLD NUTRITION')) return BRAND_IMAGE_LOGOS['GOLD NUTRITION'];
+  if (cleanBrand.includes('NATULIV')) return BRAND_IMAGE_LOGOS['NATULIV'];
+  return null;
+};
+
 export const BrandLogo: React.FC<BrandLogoProps> = ({ brand, className = '', size = 'md' }) => {
   const cleanBrand = brand.toUpperCase().trim();
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [cleanBrand]);
 
   const sizeClasses = {
-    sm: 'h-6 max-w-[110px]',
-    md: 'h-8 max-w-[150px]',
-    lg: 'h-11 max-w-[200px]',
+    sm: 'h-7 max-w-[120px]',
+    md: 'h-9 max-w-[160px]',
+    lg: 'h-12 max-w-[220px]',
   }[size];
+
+  const logoUrl = getBrandLogoUrl(cleanBrand);
+
+  if (logoUrl && !imageError) {
+    return (
+      <div className={`inline-flex items-center justify-center bg-white/95 border border-slate-200/80 px-2.5 py-1 rounded-lg shadow-md overflow-hidden ${sizeClasses} ${className}`}>
+        <img
+          src={logoUrl}
+          alt={brand}
+          onError={() => setImageError(true)}
+          className="h-full w-auto max-w-full object-contain"
+        />
+      </div>
+    );
+  }
 
   // 1. STAR NUTRITION
   if (cleanBrand.includes('STAR NUTRITION') || cleanBrand === 'STAR') {

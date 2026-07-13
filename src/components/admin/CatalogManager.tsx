@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { getEmpresaId } from '../../lib/getEmpresa';
 import { Trash2, Edit, Plus } from 'lucide-react';
+import { formatPrice, roundUpPrice } from '../../utils/formatPrice';
 
 interface Product {
   id: string;
@@ -61,7 +62,7 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
       empresa_id: empresaId,
       name: formData.name,
       description: formData.description,
-      price: parseFloat(formData.price),
+      price: roundUpPrice(formData.price),
       category_id: formData.category_id || null,
       image_url: formData.image_url || null,
       code: formData.code || null,
@@ -200,7 +201,7 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
                     </div>
                   </td>
                   <td className="p-4 text-slate-600">{cat ? cat.name : '-'}</td>
-                  <td className="p-4 font-bold text-slate-800">${product.price.toLocaleString('es-AR')}</td>
+                  <td className="p-4 font-bold text-slate-800">${formatPrice(product.price)}</td>
                   <td className="p-4">
                     <span className={`px-2 py-1 rounded-full text-xs font-bold ${product.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
                       {product.is_active ? 'Activo' : 'Oculto'}

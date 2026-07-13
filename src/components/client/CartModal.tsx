@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../../lib/CartContext';
 import { supabase } from '../../lib/supabase';
 import { X, Minus, Plus, Trash2, MapPin, Wallet, Receipt, CreditCard, Copy, CheckCircle2 } from 'lucide-react';
+import { formatPrice } from '../../utils/formatPrice';
 
 interface CartModalProps {
   empresaId: string;
@@ -66,7 +67,7 @@ export default function CartModal({ empresaId, empresaName, empresaPhone, onOrde
       });
       wpMessage += `\n*Medio de Pago:* ${paymentMethod.toUpperCase()}`;
       if (comment) wpMessage += `\n*Comentarios:* ${comment}`;
-      wpMessage += `\n\n*TOTAL: $${total.toLocaleString('es-AR')}*`;
+      wpMessage += `\n\n*TOTAL: $${formatPrice(total)}*`;
 
       const wpUrl = `https://wa.me/${empresaPhone.replace(/\D/g, '')}?text=${encodeURIComponent(wpMessage)}`;
       window.open(wpUrl, '_blank');
@@ -135,7 +136,7 @@ export default function CartModal({ empresaId, empresaName, empresaPhone, onOrde
                         <div className="flex-1">
                           <h4 className="font-bold text-white text-base">{item.name}</h4>
                           {item.notes && <p className="text-xs text-[#FF1E27] mt-1 italic">"{item.notes}"</p>}
-                          <div className="text-[#FF5C00] font-black mt-1">${(item.price * item.quantity).toLocaleString('es-AR')}</div>
+                          <div className="text-[#FF5C00] font-black mt-1">${formatPrice(item.price * item.quantity)}</div>
                         </div>
                         <div className="flex flex-col items-end gap-3">
                           <button onClick={() => removeFromCart(item.id, item.notes)} className="text-slate-500 hover:text-[#FF1E27] transition-colors">
@@ -244,7 +245,7 @@ export default function CartModal({ empresaId, empresaName, empresaPhone, onOrde
               <div className="p-5 border-t border-slate-800 bg-[#13131F] shrink-0">
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-slate-400 font-bold">Total a pagar</span>
-                  <span className="text-3xl font-black text-white">${total.toLocaleString('es-AR')}</span>
+                  <span className="text-3xl font-black text-white">${formatPrice(total)}</span>
                 </div>
                 <button 
                   type="submit"

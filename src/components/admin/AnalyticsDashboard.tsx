@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { getEmpresaId } from '../../lib/getEmpresa';
 import { TrendingUp, TrendingDown, Clock, CheckCircle2, AlertCircle, Users, Calendar, Activity, Receipt, LayoutList, Trophy, ArrowDownToLine } from 'lucide-react';
+import { formatPrice } from '../../utils/formatPrice';
 
 interface OrderItem {
   name: string;
@@ -247,7 +248,7 @@ export default function AnalyticsDashboard({ empresaSlug }: { empresaSlug: strin
             </div>
             <div>
               <p className="text-slate-500 text-xs font-medium uppercase tracking-wider mb-1">Ingresos Brutos</p>
-              <h3 className="text-2xl font-black text-slate-800">${totalRevenue.toLocaleString('es-AR')}</h3>
+              <h3 className="text-2xl font-black text-slate-800">${formatPrice(totalRevenue)}</h3>
             </div>
           </div>
           <GrowthBadge value={revenueGrowth} />
@@ -260,7 +261,7 @@ export default function AnalyticsDashboard({ empresaSlug }: { empresaSlug: strin
             </div>
             <div>
               <p className="text-slate-500 text-xs font-medium uppercase tracking-wider mb-1">Ticket Promedio</p>
-              <h3 className="text-2xl font-black text-slate-800">${Math.round(avgTicket).toLocaleString('es-AR')}</h3>
+              <h3 className="text-2xl font-black text-slate-800">${formatPrice(avgTicket)}</h3>
             </div>
           </div>
           <div className="text-xs text-slate-400 mt-2 font-medium">Gasto promedio por cliente</div>
@@ -326,7 +327,7 @@ export default function AnalyticsDashboard({ empresaSlug }: { empresaSlug: strin
                         </p>
                       </td>
                       <td className="p-3 text-right">
-                        <p className="font-black text-green-600 text-xs">${client.totalSpent.toLocaleString('es-AR')}</p>
+                        <p className="font-black text-green-600 text-xs">${formatPrice(client.totalSpent)}</p>
                         <p className="text-[10px] text-slate-400">{client.orderCount} pedidos</p>
                       </td>
                     </tr>
@@ -360,7 +361,7 @@ export default function AnalyticsDashboard({ empresaSlug }: { empresaSlug: strin
                       </td>
                       <td className="p-3 text-right">
                         <p className="font-black text-slate-800 text-xs">{prod.quantity} un.</p>
-                        <p className="text-[10px] text-green-600 font-bold">${prod.revenue.toLocaleString('es-AR')}</p>
+                        <p className="text-[10px] text-green-600 font-bold">${formatPrice(prod.revenue)}</p>
                       </td>
                     </tr>
                   ))}
@@ -393,7 +394,7 @@ export default function AnalyticsDashboard({ empresaSlug }: { empresaSlug: strin
                       </td>
                       <td className="p-3 text-right">
                         <p className="font-black text-slate-800 text-xs">{prod.quantity} un.</p>
-                        <p className="text-[10px] text-slate-400">${prod.revenue.toLocaleString('es-AR')}</p>
+                        <p className="text-[10px] text-slate-400">${formatPrice(prod.revenue)}</p>
                       </td>
                     </tr>
                   ))}
@@ -456,7 +457,7 @@ export default function AnalyticsDashboard({ empresaSlug }: { empresaSlug: strin
                       {getStatusBadge(order.status)}
                     </td>
                     <td className="p-4 text-right font-black text-slate-800">
-                      ${order.total.toLocaleString('es-AR')}
+                      ${formatPrice(order.total)}
                     </td>
                   </tr>
                 ))}
