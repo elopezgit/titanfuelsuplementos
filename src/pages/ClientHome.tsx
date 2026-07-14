@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BrandLogo } from '../utils/brandLogos';
 import { getEmpresaData } from '../lib/getEmpresa';
 import { formatPrice, roundUpPrice } from '../utils/formatPrice';
+import { FALLBACK_EMPRESA, FALLBACK_CATEGORIES, FALLBACK_BANNERS, FALLBACK_PRODUCTS } from '../data/fallbackCatalog';
 
 interface Empresa {
   id: string;
@@ -141,9 +142,11 @@ export default function ClientHome() {
     async function loadData() {
       if (!empresaSlug) return;
       try {
-        const empData = await getEmpresaData(empresaSlug);
+        let empData = await getEmpresaData(empresaSlug);
 
-        if (!empData) throw new Error('La tienda no existe o la base de datos no tiene datos cargados. Por favor ejecuta el script SQL seed_suplementos.sql.');
+        if (!empData) {
+          empData = FALLBACK_EMPRESA;
+        }
         
         setEmpresa(empData);
 
@@ -167,21 +170,41 @@ export default function ClientHome() {
           supabase.from('banners').select('*').eq('empresa_id', empData.id).eq('is_active', true)
         ]);
 
-        if (cats.data) setCategories(cats.data);
-        if (prods.data) {
+        if (cats.data && cats.data.length > 0) {
+          setCategories(cats.data);
+        } else {
+          setCategories(FALLBACK_CATEGORIES);
+        }
+
+        if (prods.data && prods.data.length > 0) {
           setProducts(prods.data.map((p: any) => ({
             ...p,
             price: roundUpPrice(p.price)
           })));
+        } else {
+          setProducts(FALLBACK_PRODUCTS.map((p: any) => ({
+            ...p,
+            price: roundUpPrice(p.price)
+          })));
         }
-        if (bans.data) {
-          // Sort banners by sort_order in memory so it doesn't crash if column doesn't exist yet
+
+        if (bans.data && bans.data.length > 0) {
           const sortedBans = bans.data.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
           setBanners(sortedBans);
+        } else {
+          setBanners(FALLBACK_BANNERS);
         }
 
       } catch (err: any) {
-        setError(err.message);
+        // En caso de cualquier error de conexión a la base, cargamos el catálogo completo como fallback
+        setEmpresa(FALLBACK_EMPRESA);
+        setCategories(FALLBACK_CATEGORIES);
+        setProducts(FALLBACK_PRODUCTS.map((p: any) => ({
+          ...p,
+          price: roundUpPrice(p.price)
+        })));
+        setBanners(FALLBACK_BANNERS);
+        setError(null);
       } finally {
         setLoading(false);
         setTimeout(() => setShowSplash(false), 3500); // Dar más tiempo para la animación completa

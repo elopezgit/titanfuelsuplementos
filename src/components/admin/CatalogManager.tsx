@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase';
 import { getEmpresaId } from '../../lib/getEmpresa';
 import { Trash2, Edit, Plus } from 'lucide-react';
 import { formatPrice, roundUpPrice } from '../../utils/formatPrice';
+import { FALLBACK_EMPRESA, FALLBACK_CATEGORIES, FALLBACK_PRODUCTS } from '../../data/fallbackCatalog';
 
 interface Product {
   id: string;
@@ -35,23 +36,36 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
 
   useEffect(() => {
     async function init() {
-      const id = await getEmpresaId(empresaSlug);
-      if (id) {
-        setEmpresaId(id);
-        fetchData(id);
-      }
+      let id = await getEmpresaId(empresaSlug);
+      if (!id) id = FALLBACK_EMPRESA.id;
+      setEmpresaId(id);
+      fetchData(id);
     }
     init();
   }, [empresaSlug]);
 
   const fetchData = async (id: string) => {
-    const [cats, prods] = await Promise.all([
-      supabase.from('categories').select('*').eq('empresa_id', id).order('name'),
-      supabase.from('products').select('*').eq('empresa_id', id).order('name')
-    ]);
-    
-    if (cats.data) setCategories(cats.data);
-    if (prods.data) setProducts(prods.data);
+    try {
+      const [cats, prods] = await Promise.all([
+        supabase.from('categories').select('*').eq('empresa_id', id).order('name'),
+        supabase.from('products').select('*').eq('empresa_id', id).order('name')
+      ]);
+      
+      if (cats.data && cats.data.length > 0) {
+        setCategories(cats.data);
+      } else {
+        setCategories(FALLBACK_CATEGORIES);
+      }
+
+      if (prods.data && prods.data.length > 0) {
+        setProducts(prods.data);
+      } else {
+        setProducts(FALLBACK_PRODUCTS);
+      }
+    } catch (e) {
+      setCategories(FALLBACK_CATEGORIES);
+      setProducts(FALLBACK_PRODUCTS);
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {

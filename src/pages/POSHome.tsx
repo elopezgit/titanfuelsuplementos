@@ -4,6 +4,7 @@ import { getEmpresaId } from '../lib/getEmpresa';
 import { useCart } from '../lib/CartContext';
 import { Search, Plus, Minus, Trash2, Wallet, CreditCard, Send, Coffee, Utensils } from 'lucide-react';
 import { formatPrice, roundUpPrice } from '../utils/formatPrice';
+import { FALLBACK_EMPRESA, FALLBACK_CATEGORIES, FALLBACK_PRODUCTS } from '../data/fallbackCatalog';
 
 interface Category {
   id: string;
@@ -44,8 +45,10 @@ export default function POSHome({ empresaSlug }: { empresaSlug: string }) {
   useEffect(() => {
     async function loadData() {
       try {
-        const id = await getEmpresaId(empresaSlug);
-        if (!id) throw new Error('Empresa no encontrada.');
+        let id = await getEmpresaId(empresaSlug);
+        if (!id) {
+          id = FALLBACK_EMPRESA.id;
+        }
         
         setEmpresaId(id);
 
@@ -54,15 +57,30 @@ export default function POSHome({ empresaSlug }: { empresaSlug: string }) {
           supabase.from('products').select('*').eq('empresa_id', id).eq('is_active', true)
         ]);
 
-        if (cats.data) setCategories(cats.data);
-        if (prods.data) {
+        if (cats.data && cats.data.length > 0) {
+          setCategories(cats.data);
+        } else {
+          setCategories(FALLBACK_CATEGORIES);
+        }
+
+        if (prods.data && prods.data.length > 0) {
           setProducts(prods.data.map((p: any) => ({
+            ...p,
+            price: roundUpPrice(p.price)
+          })));
+        } else {
+          setProducts(FALLBACK_PRODUCTS.map((p: any) => ({
             ...p,
             price: roundUpPrice(p.price)
           })));
         }
       } catch (err: any) {
-        setError(err.message);
+        setCategories(FALLBACK_CATEGORIES);
+        setProducts(FALLBACK_PRODUCTS.map((p: any) => ({
+          ...p,
+          price: roundUpPrice(p.price)
+        })));
+        setError(null);
       } finally {
         setLoading(false);
       }
