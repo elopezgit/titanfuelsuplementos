@@ -10,6 +10,7 @@ interface Product {
   description: string;
   price: number;
   image_url?: string;
+  price_half?: number | null;
 }
 
 interface ProductModalProps {
@@ -65,9 +66,12 @@ export default function ProductModal({ product, isOpen, onClose, onAddToCart }: 
             className="fixed bottom-0 left-0 right-0 z-[101] bg-[#13131F] text-white rounded-t-3xl overflow-hidden flex flex-col max-h-[90vh] md:max-w-md md:mx-auto md:bottom-4 md:rounded-3xl shadow-2xl border border-red-500/30"
           >
             <div className="relative h-64 bg-black shrink-0">
+              {/* Drag Handle Visual */}
+              <div className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-white/30 rounded-full z-20 backdrop-blur-sm"></div>
               <img 
                 src={product.image_url || `https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&q=80`} 
                 alt={product.name}
+                loading="lazy"
                 className="w-full h-full object-cover opacity-50"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#13131F] via-black/30 to-transparent"></div>
@@ -116,7 +120,7 @@ export default function ProductModal({ product, isOpen, onClose, onAddToCart }: 
               </div>
             </div>
 
-            <div className="p-6 border-t border-slate-800 bg-[#13131F] shrink-0">
+            <div className="p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] border-t border-slate-800 bg-[#13131F] shrink-0">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4 bg-[#181824] rounded-2xl p-1.5 border border-slate-700/80">
                   <button 
@@ -133,13 +137,30 @@ export default function ProductModal({ product, isOpen, onClose, onAddToCart }: 
                     <Plus size={18} />
                   </button>
                 </div>
-                <div className="text-2xl font-black text-white">
-                  ${formatPrice(product.price * quantity)}
+                <div className="text-right">
+                  {product.price_half ? (
+                    <>
+                      <div className="text-sm font-semibold text-slate-500 line-through">
+                        ${formatPrice(product.price * quantity)}
+                      </div>
+                      <div className="text-2xl font-black text-[#FF1E27]">
+                        ${formatPrice(product.price_half * quantity)}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-2xl font-black text-white">
+                      ${formatPrice(product.price * quantity)}
+                    </div>
+                  )}
                 </div>
               </div>
 
               <button 
-                onClick={handleAdd}
+                onClick={() => {
+                  const effectivePrice = product.price_half || product.price;
+                  onAddToCart({ ...product, price: effectivePrice }, quantity, notes);
+                  onClose();
+                }}
                 className="w-full bg-gradient-to-r from-[#FF1E27] via-[#DC2626] to-[#FF5C00] hover:brightness-110 text-white py-4 rounded-2xl font-black uppercase tracking-wide text-lg shadow-[0_5px_25px_rgba(255,30,39,0.45)] transition-all active:scale-[0.98]"
               >
                 ⚡ Agregar al pedido

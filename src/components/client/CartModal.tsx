@@ -108,16 +108,20 @@ export default function CartModal({ empresaId, empresaName, empresaPhone, onOrde
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="fixed bottom-0 left-0 right-0 top-12 md:top-auto md:bottom-4 md:left-1/2 md:-translate-x-1/2 md:max-w-2xl md:h-[85vh] bg-[#13131F] text-white z-[101] rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-red-500/30"
           >
-            <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-[#13131F] shrink-0">
-              <h2 className="text-xl font-black text-white flex items-center gap-2 uppercase tracking-wide">
-                <Receipt size={22} className="text-[#FF1E27]" /> Mi Pedido Oficial
-              </h2>
-              <button 
-                onClick={() => setIsCartOpen(false)}
-                className="p-2.5 bg-[#181824] text-slate-300 rounded-full border border-slate-700/80 hover:bg-[#FF1E27] hover:text-white transition-colors"
-              >
-                <X size={20} />
-              </button>
+            <div className="p-5 pt-7 border-b border-slate-800 flex flex-col bg-[#13131F] shrink-0 relative rounded-t-3xl">
+              {/* Drag Handle Visual */}
+              <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-slate-700 rounded-full z-20"></div>
+              <div className="flex items-center justify-between w-full">
+                <h2 className="text-xl font-black text-white flex items-center gap-2 uppercase tracking-wide">
+                  <Receipt size={22} className="text-[#FF1E27]" /> Mi Pedido Oficial
+                </h2>
+                <button 
+                  onClick={() => setIsCartOpen(false)}
+                  className="p-2.5 bg-[#181824] text-slate-300 rounded-full border border-slate-700/80 hover:bg-[#FF1E27] hover:text-white transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
             </div>
 
             <div className="flex-1 overflow-y-auto hide-scrollbar bg-[#0D0D14]">
@@ -143,12 +147,12 @@ export default function CartModal({ empresaId, empresaName, empresaPhone, onOrde
                             <Trash2 size={18} />
                           </button>
                           <div className="flex items-center gap-3 bg-[#181824] rounded-xl border border-slate-700/80 p-1">
-                            <button onClick={() => updateQuantity(item.id, item.quantity - 1, item.notes)} className="w-7 h-7 flex items-center justify-center bg-[#242436] rounded-lg shadow-sm text-white">
-                              <Minus size={14} />
+                            <button onClick={() => updateQuantity(item.id, item.quantity - 1, item.notes)} className="w-9 h-9 flex items-center justify-center bg-[#242436] rounded-lg shadow-sm text-white active:scale-95 transition-transform">
+                              <Minus size={16} />
                             </button>
-                            <span className="font-bold text-sm w-4 text-center text-white">{item.quantity}</span>
-                            <button onClick={() => updateQuantity(item.id, item.quantity + 1, item.notes)} className="w-7 h-7 flex items-center justify-center bg-gradient-to-r from-[#FF1E27] to-[#FF5C00] rounded-lg shadow-sm text-white">
-                              <Plus size={14} />
+                            <span className="font-bold text-base w-5 text-center text-white">{item.quantity}</span>
+                            <button onClick={() => updateQuantity(item.id, item.quantity + 1, item.notes)} className="w-9 h-9 flex items-center justify-center bg-gradient-to-r from-[#FF1E27] to-[#FF5C00] rounded-lg shadow-sm text-white active:scale-95 transition-transform">
+                              <Plus size={16} />
                             </button>
                           </div>
                         </div>
@@ -163,22 +167,22 @@ export default function CartModal({ empresaId, empresaName, empresaPhone, onOrde
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-400 mb-1">Nombre y Apellido</label>
-                        <input required type="text" value={customerName} onChange={e => setCustomerName(e.target.value)} className="w-full bg-[#181824] border border-slate-700/80 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-[#FF1E27]/30 focus:border-[#FF1E27] outline-none placeholder:text-slate-500" placeholder="Juan Pérez" />
+                        <input required type="text" value={customerName} onChange={e => setCustomerName(e.target.value)} className="w-full bg-[#181824] border border-slate-700/80 rounded-xl p-3 text-base text-white focus:ring-2 focus:ring-[#FF1E27]/30 focus:border-[#FF1E27] outline-none placeholder:text-slate-500" placeholder="Juan Pérez" />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-400 mb-1">Teléfono (WhatsApp)</label>
-                        <input required type="tel" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} className="w-full bg-[#181824] border border-slate-700/80 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-[#FF1E27]/30 focus:border-[#FF1E27] outline-none placeholder:text-slate-500" placeholder="381 123 4567" />
+                        <input required type="tel" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} className="w-full bg-[#181824] border border-slate-700/80 rounded-xl p-3 text-base text-white focus:ring-2 focus:ring-[#FF1E27]/30 focus:border-[#FF1E27] outline-none placeholder:text-slate-500" placeholder="381 123 4567" />
                       </div>
                     </div>
 
                     <div>
                       <label className="block text-xs font-bold text-slate-400 mb-1 flex items-center gap-1"><MapPin size={14} className="text-[#FF5C00]" /> Dirección de Envío</label>
-                      <input type="text" value={deliveryAddress} onChange={e => setDeliveryAddress(e.target.value)} className="w-full bg-[#181824] border border-slate-700/80 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-[#FF1E27]/30 focus:border-[#FF1E27] outline-none placeholder:text-slate-500" placeholder="Calle Falsa 123 (Opcional si retira)" />
+                      <input type="text" value={deliveryAddress} onChange={e => setDeliveryAddress(e.target.value)} className="w-full bg-[#181824] border border-slate-700/80 rounded-xl p-3 text-base text-white focus:ring-2 focus:ring-[#FF1E27]/30 focus:border-[#FF1E27] outline-none placeholder:text-slate-500" placeholder="Calle Falsa 123 (Opcional si retira)" />
                     </div>
 
                     <div>
                       <label className="block text-xs font-bold text-slate-400 mb-1">Comentarios Generales</label>
-                      <textarea value={comment} onChange={e => setComment(e.target.value)} className="w-full bg-[#181824] border border-slate-700/80 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-[#FF1E27]/30 focus:border-[#FF1E27] outline-none resize-none h-16 placeholder:text-slate-500" placeholder="Ej: Preferencia de horario, timbre, etc." />
+                      <textarea value={comment} onChange={e => setComment(e.target.value)} className="w-full bg-[#181824] border border-slate-700/80 rounded-xl p-3 text-base text-white focus:ring-2 focus:ring-[#FF1E27]/30 focus:border-[#FF1E27] outline-none resize-none h-16 placeholder:text-slate-500" placeholder="Ej: Preferencia de horario, timbre, etc." />
                     </div>
 
                     <div className="pt-4 border-t border-slate-800">
@@ -242,7 +246,7 @@ export default function CartModal({ empresaId, empresaName, empresaPhone, onOrde
 
             {/* Footer Total & Button */}
             {items.length > 0 && (
-              <div className="p-5 border-t border-slate-800 bg-[#13131F] shrink-0">
+              <div className="p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] border-t border-slate-800 bg-[#13131F] shrink-0">
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-slate-400 font-bold">Total a pagar</span>
                   <span className="text-3xl font-black text-white">${formatPrice(total)}</span>

@@ -1,0 +1,1 @@
+Inicializar AI Bootstrap Framework sobre este proyecto siguiendo el workflow obligatorio, sin implementar código hasta presentar el resumen de comprensión y recibir aprobación.

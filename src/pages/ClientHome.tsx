@@ -10,7 +10,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BrandLogo } from '../utils/brandLogos';
 import { getEmpresaData } from '../lib/getEmpresa';
 import { formatPrice, roundUpPrice } from '../utils/formatPrice';
-import { FALLBACK_EMPRESA, FALLBACK_CATEGORIES, FALLBACK_BANNERS, FALLBACK_PRODUCTS } from '../data/fallbackCatalog';
 
 interface Empresa {
   id: string;
@@ -35,6 +34,7 @@ interface Product {
   image_url?: string;
   is_active: boolean;
   sort_order?: number;
+  price_half?: number | null;
 }
 
 interface Banner {
@@ -145,7 +145,7 @@ export default function ClientHome() {
         let empData = await getEmpresaData(empresaSlug);
 
         if (!empData) {
-          empData = FALLBACK_EMPRESA;
+          throw new Error("No se pudo cargar la información de la empresa.");
         }
         
         setEmpresa(empData);
@@ -170,41 +170,25 @@ export default function ClientHome() {
           supabase.from('banners').select('*').eq('empresa_id', empData.id).eq('is_active', true)
         ]);
 
-        if (cats.data && cats.data.length > 0) {
+        if (cats.data) {
           setCategories(cats.data);
-        } else {
-          setCategories(FALLBACK_CATEGORIES);
         }
 
-        if (prods.data && prods.data.length > 0) {
+        if (prods.data) {
           setProducts(prods.data.map((p: any) => ({
             ...p,
-            price: roundUpPrice(p.price)
-          })));
-        } else {
-          setProducts(FALLBACK_PRODUCTS.map((p: any) => ({
-            ...p,
-            price: roundUpPrice(p.price)
+            price: roundUpPrice(p.price),
+            price_half: p.price_half ? roundUpPrice(p.price_half) : null
           })));
         }
 
-        if (bans.data && bans.data.length > 0) {
+        if (bans.data) {
           const sortedBans = bans.data.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
           setBanners(sortedBans);
-        } else {
-          setBanners(FALLBACK_BANNERS);
         }
 
       } catch (err: any) {
-        // En caso de cualquier error de conexión a la base, cargamos el catálogo completo como fallback
-        setEmpresa(FALLBACK_EMPRESA);
-        setCategories(FALLBACK_CATEGORIES);
-        setProducts(FALLBACK_PRODUCTS.map((p: any) => ({
-          ...p,
-          price: roundUpPrice(p.price)
-        })));
-        setBanners(FALLBACK_BANNERS);
-        setError(null);
+        setError(err.message || 'Error cargando datos');
       } finally {
         setLoading(false);
         setTimeout(() => setShowSplash(false), 3500); // Dar más tiempo para la animación completa
@@ -357,8 +341,12 @@ export default function ClientHome() {
 
   const filteredProducts = products.filter(p => {
     const brand = getProductBrand(p);
-    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    // Búsqueda inteligente por múltiples palabras (ej: "star whey" encontrará "[STAR] Premium Whey")
+    const searchTerms = searchQuery.toLowerCase().split(' ').filter(t => t.trim() !== '');
+    const matchesSearch = searchTerms.every(term => 
+      p.name.toLowerCase().includes(term) || (p.description && p.description.toLowerCase().includes(term))
+    );
     const matchesCategory = activeCategory === 'todas' || p.category_id === activeCategory;
     const matchesBrand = selectedBrand === 'todas' || brand === selectedBrand;
     const matchesKeyword = selectedKeyword === 'todas' || 
@@ -386,41 +374,22 @@ export default function ClientHome() {
     setIsCartOpen(true);
   };
 
-  const displayBanners = banners.length > 0 ? banners : [
-    { 
-      id: '1', 
-      image_url: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&q=80',
-      title: 'COMBUSTIBLE DE TITANES',
-      subtitle: 'Envíos a todo el país mayorista y minorista'
-    },
-    { 
-      id: '2', 
-      image_url: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=1200&q=80',
-      title: 'POTENCIA TU RENDIMIENTO',
-      subtitle: 'Las mejores marcas oficiales al mejor precio'
-    },
-    { 
-      id: '3', 
-      image_url: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1200&q=80',
-      title: '100% PURA CREATINA & WHEY',
-      subtitle: 'Calidad superior en suplementación deportiva'
-    }
-  ];
+  const displayBanners = banners;
 
   return (
-    <div className="min-h-screen bg-background pb-28 font-sans text-slate-100">
+    <div className="min-h-screen bg-background pb-32 font-sans text-slate-100">
       {/* 1. HERO HEADER */}
-      <header className="bg-surface/95 pt-6 pb-5 px-4 sticky top-0 z-40 border-b border-red-500/20 backdrop-blur-2xl shadow-2xl">
+      <header className="bg-[#09090D]/85 pt-[env(safe-area-inset-top,1rem)] pb-4 px-4 sticky top-0 z-40 border-b border-red-500/20 backdrop-blur-3xl shadow-2xl">
          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#FF1E27] to-[#FF5C00]" />
-         <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center gap-3.5">
+         <div className="flex justify-between items-center mb-4 gap-2">
+          <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0 flex-1">
              <div className="w-14 h-14 bg-[#09090D] rounded-2xl border-2 border-[#FF1E27] flex items-center justify-center shadow-[0_0_20px_rgba(255,30,39,0.4)] overflow-hidden shrink-0 transition-transform hover:scale-105">
                 <img src="/logo.jfif" alt="Titan Fuel Logo" className="w-full h-full object-cover" onError={(e) => {
                   e.currentTarget.src = '/img/logo/logo.jfif';
                 }} />
              </div>
-             <div>
-               <h1 className="text-xl md:text-2xl font-black tracking-tight text-white font-display uppercase drop-shadow-[0_2px_10px_rgba(255,30,39,0.35)]">
+             <div className="min-w-0 flex-1">
+               <h1 className="text-[15px] sm:text-lg md:text-2xl font-black tracking-tight text-white font-display uppercase drop-shadow-[0_2px_10px_rgba(255,30,39,0.35)] truncate">
                  TITAN FUEL SUPLEMENTOS
                </h1>
                <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 mt-0.5">
@@ -436,7 +405,7 @@ export default function ClientHome() {
           </div>
           
           {/* Social & WhatsApp Contact */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             <a 
               href={`https://wa.me/5493814751620?text=${encodeURIComponent('¡Hola Titan Fuel! Quisiera consultar sobre suplementos deportivos.')}`}
               target="_blank" 
@@ -466,7 +435,7 @@ export default function ClientHome() {
             placeholder="Buscar proteína, creatina, pre-entreno, marca (Star, ENA, Gold)..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#161622] border border-slate-700/80 text-white rounded-2xl py-3.5 pl-12 pr-4 shadow-inner outline-none focus:border-[#FF1E27] focus:ring-2 focus:ring-[#FF1E27]/20 transition-all text-sm placeholder:text-slate-500"
+            className="w-full bg-[#161622] border border-slate-700/80 text-white rounded-2xl py-3.5 pl-12 pr-4 shadow-inner outline-none focus:border-[#FF1E27] focus:ring-2 focus:ring-[#FF1E27]/20 transition-all text-base placeholder:text-slate-500"
           />
         </div>
 
@@ -803,7 +772,14 @@ export default function ClientHome() {
                           </div>
                           
                           <div className="flex items-center gap-3 mt-1">
-                            <span className="font-black text-white text-lg tracking-tight">${formatPrice(product.price)}</span>
+                            {product.price_half ? (
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="font-black text-[#FF1E27] text-lg tracking-tight">${formatPrice(product.price_half)}</span>
+                                <span className="font-semibold text-slate-500 text-xs line-through">${formatPrice(product.price)}</span>
+                              </div>
+                            ) : (
+                              <span className="font-black text-white text-lg tracking-tight">${formatPrice(product.price)}</span>
+                            )}
                             {qty > 0 && (
                               <span className="bg-[#FF1E27]/20 text-[#FF1E27] font-bold text-[10px] px-2.5 py-0.5 rounded-md border border-[#FF1E27]/40 uppercase tracking-wider">
                                 {qty} en pedido
@@ -831,15 +807,16 @@ export default function ClientHome() {
                           <img 
                             src={product.image_url || `https://images.unsplash.com/photo-1550547660-d9450f859349?w=400&q=80`} 
                             alt={product.name}
+                            loading="lazy"
                             className="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:scale-110 transition-transform duration-500"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/50 pointer-events-none" />
 
-                          {/* Add Button inside image corner */}
+                          {/* Add Button inside image corner - Touch Optimized */}
                           <button 
-                            className="absolute bottom-1.5 right-1.5 z-20 w-8 h-8 flex items-center justify-center bg-gradient-to-r from-[#FF1E27] to-[#FF5C00] rounded-lg text-white shadow-lg shadow-[#FF1E27]/40 active:scale-90 hover:brightness-110 transition-all"
+                            className="absolute bottom-1.5 right-1.5 z-20 w-11 h-11 flex items-center justify-center bg-gradient-to-r from-[#FF1E27] to-[#FF5C00] rounded-xl text-white shadow-lg shadow-[#FF1E27]/40 active:scale-[0.85] hover:brightness-110 transition-all"
                           >
-                            <Plus size={16} strokeWidth={3} />
+                            <Plus size={20} strokeWidth={3} />
                           </button>
                         </div>
                       </motion.div>
@@ -867,20 +844,22 @@ export default function ClientHome() {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-6 left-4 right-4 md:max-w-md md:mx-auto z-40"
+            className="fixed bottom-0 left-0 right-0 z-40 p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] bg-gradient-to-t from-[#09090D] via-[#09090D]/90 to-transparent pointer-events-none"
           >
-            <button 
-              onClick={() => setIsCartOpen(true)}
-              className="w-full bg-gradient-to-r from-[#FF1E27] via-[#DC2626] to-[#FF5C00] text-white p-4 rounded-2xl shadow-[0_10px_35px_rgba(255,30,39,0.5)] flex items-center justify-between transition-all hover:brightness-110 active:scale-95 border border-white/20"
-            >
-              <div className="flex items-center gap-3">
-                <div className="bg-black/35 text-white w-10 h-10 rounded-xl flex items-center justify-center font-black text-lg border border-white/20 shadow-inner">
-                  {cartItemCount}
+            <div className="md:max-w-md md:mx-auto pointer-events-auto">
+              <button 
+                onClick={() => setIsCartOpen(true)}
+                className="w-full bg-gradient-to-r from-[#FF1E27] via-[#DC2626] to-[#FF5C00] text-white p-4 rounded-2xl shadow-[0_10px_35px_rgba(255,30,39,0.5)] flex items-center justify-between transition-all hover:brightness-110 active:scale-[0.97] border border-white/20"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="bg-black/35 text-white w-10 h-10 rounded-xl flex items-center justify-center font-black text-lg border border-white/20 shadow-inner">
+                    {cartItemCount}
+                  </div>
+                  <span className="font-black text-lg tracking-tight uppercase">Ver mi pedido</span>
                 </div>
-                <span className="font-black text-lg tracking-tight uppercase">Ver mi pedido</span>
-              </div>
-              <ShoppingCart size={24} className="text-white" />
-            </button>
+                <ShoppingCart size={24} className="text-white" />
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

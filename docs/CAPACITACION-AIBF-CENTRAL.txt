@@ -1,0 +1,655 @@
+================================================================================
+                   CAPACITACION: AI BOOTSTRAP FRAMEWORK CENTRAL
+                               aibf-central v1.0
+================================================================================
+
+INDICE
+------
+1.  QUE ES AIBF CENTRAL?
+2.  PARA QUE SIRVE?
+3.  QUE INCLUYE? (INVENTARIO COMPLETO)
+4.  PARA QUE ESTA PREPARADO? (CAPACIDADES)
+5.  ESCENARIO 1: PROYECTO NUEVO DESDE CERO
+6.  ESCENARIO 2: PROYECTO EXISTENTE (MEJORA)
+7.  COMO SE IMPLEMENTA EN UN PROYECTO?
+8.  FLUJO DE TRABAJO DIARIO CON AIBF
+9.  ROL DE LOS AGENTES Y COMO SE INVOCAN
+10. PERSONALIZACION Y EXTENSION
+11. PREGUNTAS FRECUENTES
+12. PROMPT OPTIMIZADO PARA OPENCODE
+
+
+================================================================================
+1. QUE ES AIBF CENTRAL?
+================================================================================
+
+AI Bootstrap Framework Central (aibf-central) es un SUPER-PROYECTO BASE que
+unifica 24 modulos originales del AI Bootstrap Framework en una sola estructura
+coherente, lista para usar con el asistente IA opencode.
+
+NO es una libreria, NO es un framework de codigo, NO es un generador de
+andamios de codigo. Es un SISTEMA DE ORQUESTACION DE INTELIGENCIA ARTIFICIAL
+que le dice al asistente IA COMO debe comportarse, QUE debe preguntar, QUE
+agentes debe invocar, QUE skills debe usar, y QUE workflow debe seguir.
+
+En terminos simples: aibf-central es el "cerebro" que transforma a opencode
+de un simple asistente de codigo en un EQUIPO DE DESARROLLO COMPLETO con
+22 especialistas, 110 skills tecnicas y un workflow de 12 fases.
+
+
+================================================================================
+2. PARA QUE SIRVE?
+================================================================================
+
+aibf-central sirve para:
+
+  a) ESTANDARIZAR la forma en que opencode aborda cualquier proyecto de software
+  b) PROFESIONALIZAR las interacciones con la IA, evitando respuestas genericas
+  c) ACELERAR la entrega usando agentes especializados pre-configurados
+  d) GARANTIZAR calidad mediante checklists, validaciones y puertas de calidad
+  e) MANTENER contexto entre sesiones mediante un sistema de memoria persistente
+  f) AUDITAR cada decision tecnica a traves de ADRs (Architecture Decision Records)
+  g) REDUCIR costos de tokens cargando solo el contexto minimo necesario
+  h) ESCALAR el conocimiento del equipo, especialmente en equipos junior
+
+
+================================================================================
+3. QUE INCLUYE? (INVENTARIO COMPLETO)
+================================================================================
+
+Al copiar aibf-central a tu proyecto, obtienes:
+
+  22 AGENTES ESPECIALIZADOS  (cada uno con 42-91 lineas de detalle)
+  ├── Coordinator           - Orquestador principal del framework
+  ├── Product Owner         - Vision de producto y backlog
+  ├── Business Analyst      - Analisis de negocio y requisitos
+  ├── Scrum Master          - Procesos agiles y metricas de equipo
+  ├── Software Architect    - Arquitectura y patrones
+  ├── Tech Lead             - Liderazgo tecnico y deuda tecnica
+  ├── Backend Expert        - APIs, logica de negocio, .NET/Node/Java/Python
+  ├── Frontend Expert       - UI, componentes, React/Angular
+  ├── Mobile Expert         - iOS, Android, React Native, Flutter
+  ├── UX Designer           - Experiencia de usuario, accesibilidad, prototipado
+  ├── Database Expert       - Modelado, optimizacion, SQL/NoSQL
+  ├── DevOps Expert         - CI/CD, IaC, contenedores
+  ├── SRE Expert            - Confiabilidad, SLOs, observabilidad
+  ├── Cloud Architect       - Cloud strategy, Well-Architected, migracion
+  ├── Security Expert       - OWASP Top 10, autenticacion, compliance
+  ├── QA Expert             - Pruebas unitarias, integracion, E2E
+  ├── Performance Expert    - Core Web Vitals, optimizacion
+  ├── Data Scientist        - ML, pipelines, analitica predictiva
+  ├── Data Engineer         - ETL/ELT, data warehouse, calidad de datos
+  ├── Documentation Expert  - Documentacion tecnica, ADRs, guias
+  ├── AI Token Optimizer    - Optimizacion de tokens del LLM
+  └── Compliance Officer    - GDPR, CCPA, HIPAA, privacidad
+
+  110 SKILLS EXPERTAS  (11 areas x 10 skills cada una)
+  ├── architecture/         - Patrones, ADRs, diagramas C4, revisiones
+  ├── backend/              - APIs, ORM, performance, testing
+  ├── frontend/             - Componentes, estado, routing, testing
+  ├── mobile/               - Rendimiento, offline, seguridad, CI/CD, tiendas
+  ├── database/             - Modelado, consultas, indices, migraciones
+  ├── devops/               - CI/CD, Docker, Kubernetes, IaC
+  ├── testing/              - Unit, integration, E2E, contract testing
+  ├── security/             - OWASP, auth, encriptacion, compliance
+  ├── performance/          - Cache, lazy loading, optimizacion BD
+  ├── business/             - Dependencias, glossario, modulos
+  └── agile/                - Scrum, Kanban, retrospectivas, DoD
+
+  16 CARPETAS DE CONFIGURACION
+  ├── core/                 - Bootstrap, discovery, generacion (18 archivos)
+  ├── workflow/             - Workflow, orquestador, planificacion (9)
+  ├── memory/               - Memoria persistente del proyecto (15)
+  ├── knowledge/            - Dominios, catalogos, conocimiento (19)
+  ├── templates/            - Plantillas ADR, RFC, API, User Story (35)
+  ├── prompts/              - Prompts reutilizables por contexto (9)
+  ├── technology/           - Guias por stack tecnologico (31)
+  ├── specialists/          - Especialistas por tecnologia (11)
+  ├── skills/               - Skills base + expert (135)
+  ├── engineering/          - Playbook de ingenieria (3)
+  ├── governance/           - Politicas y gobierno (5)
+  ├── quality/              - Calidad, metricas, auditoria (12)
+  ├── engine/               - Motores IA: tokens, contexto (7)
+  ├── playbooks/            - Playbooks enterprise (9)
+  ├── rules/                - Reglas de generacion (1)
+  └── AGENTS.md             - Punto de entrada del framework
+
+
+================================================================================
+4. PARA QUE ESTA PREPARADO? (CAPACIDADES)
+================================================================================
+
+aibf-central esta preparado para:
+
+  4.1. STACKS TECNOLOGICOS
+       - .NET (ASP.NET Core, EF Core, Blazor, MAUI)
+       - Node.js (Express, NestJS, Next.js)
+       - Java (Spring Boot, JPA)
+       - Python (FastAPI, Django)
+       - React (Components, State, Routing, Testing, Performance)
+       - Angular (Components, Routing, Signals, Testing)
+       - Bases de datos: PostgreSQL, SQL Server, MySQL, MongoDB, Sybase
+
+  4.2. DOMINIOS DE NEGOCIO
+       - eCommerce (carrito, catalogo, pagos, logistica)
+       - Fintech (transacciones, compliance, fraude)
+       - SaaS (multi-tenant, suscripciones, facturacion)
+       - Travel (reservas, disponibilidad, itinerarios)
+       - Collections (cobranzas, scoring, reportes)
+
+  4.3. TIPOS DE PROYECTO
+       - Proyectos nuevos desde cero
+       - Proyectos existentes en mantenimiento
+       - Migraciones tecnologicas (ej: Sybase a SQL Server)
+       - Refactorizaciones y pago de deuda tecnica
+       - Microservicios desde monolitos
+       - Migraciones a la nube (rehost, replatform, refactor)
+
+  4.4. ARQUITECTURAS
+       - Monolito modular
+       - Clean Architecture / Hexagonal
+       - Microservicios
+       - CQRS / Event Sourcing
+       - Serverless
+       - Vertical Slices
+
+  4.5. PROCESOS AGILES
+       - Scrum completo (ceremonias, metricas, retrospectivas)
+       - Kanban (WIP limits, cycle time, flujo)
+       - SAFe / LeSS para escalado
+
+
+================================================================================
+5. ESCENARIO 1: PROYECTO NUEVO DESDE CERO
+================================================================================
+
+PASO 1: Copiar aibf-central al nuevo proyecto
+  Se copia toda la carpeta aibf-central/ como base del proyecto.
+  Esto agrega la carpeta .opencode/ con toda la inteligencia.
+
+PASO 2: Iniciar el proyecto con el asistente
+  El desarrollador le dice a opencode:
+    "Inicia este proyecto con AIBF"
+
+PASO 3: El asistente ejecuta el ciclo de bootstrap
+  a) BOOTSTRAP:
+     - Lee AIBF-COMPLETE.md como contexto inicial
+     - Prepara la estructura base del proyecto
+     - Configura el sistema de memoria (.opencode/memory/)
+
+  b) DISCOVERY:
+     - Pregunta al usuario sobre el proyecto:
+       * Nombre y proposito del proyecto
+       * Stack tecnologico deseado
+       * Dominio de negocio
+       * Equipo y roles
+       * Requisitos iniciales
+     - Detecta tecnologias, estructura y patrones
+
+  c) ANALISIS:
+     - El Business Analyst descompone los requisitos
+     - El Software Architect define la arquitectura base
+     - Se genera un plan de accion con fases
+
+  d) SUMMARY:
+     - Muestra al usuario un resumen del plan
+     - Pide aprobacion antes de continuar
+
+  e) GENERACION:
+     - Crea la estructura de carpetas del proyecto
+     - Genera configuracion inicial (package.json, Dockerfile, etc.)
+     - Configura CI/CD basico
+     - Crea el proyecto base con la arquitectura elegida
+
+PASO 4: Desarrollo iterativo
+  El desarrollador sigue pidiendo funcionalidades:
+    "Necesito un modulo de autenticacion con JWT"
+    "Agrega una API REST para el catalogo de productos"
+    "Crea las pruebas unitarias para el servicio de usuarios"
+
+  Cada solicitud ejecuta el ciclo completo:
+    Discovery → Analisis → Planificacion → Aprobacion → Implementacion
+    → Validacion → Documentacion → Actualizacion de memoria
+
+EJEMPLO CONCRETO:
+
+  Desarrollador: "Inicia un proyecto SaaS de facturacion electronica con
+                  .NET 8 + React + PostgreSQL"
+
+  opencode + aibf-central:
+    1. Coordinator recibe la solicitud
+    2. Invoca Software Architect para definir arquitectura
+    3. Invoca Backend Expert para .NET
+    4. Invoca Frontend Expert para React
+    5. Invoca Database Expert para PostgreSQL
+    6. Cada agente contribuye segun su especialidad
+    7. Se genera el proyecto completo con:
+       - Clean Architecture en backend
+       - React + Vite en frontend
+       - EF Core + PostgreSQL
+       - Autenticacion JWT
+       - Docker Compose para desarrollo
+       - GitHub Actions para CI/CD
+       - Tests unitarios basicos
+
+
+================================================================================
+6. ESCENARIO 2: PROYECTO EXISTENTE (MEJORA)
+================================================================================
+
+PASO 1: Copiar aibf-central al proyecto existente
+  Se copia la carpeta aibf-central/ al proyecto actual.
+  Solo se agrega la carpeta .opencode/ - no afecta el codigo existente.
+
+PASO 2: Iniciar analisis del proyecto existente
+  El desarrollador le dice a opencode:
+    "Analiza este proyecto existente con AIBF para entender su estado"
+
+PASO 3: El asistente ejecuta discovery profundo
+  a) DISCOVERY:
+     - Escanea la estructura completa del proyecto
+     - Detecta el stack tecnologico real
+     - Analiza dependencias (package.json, .csproj, requirements.txt)
+     - Identifica patrones arquitectonicos
+     - Mide calidad de codigo y cobertura de pruebas
+     - Detecta deuda tecnica y vulnerabilidades
+
+  b) ANALISIS:
+     - El Business Analyst entiende el dominio y objetivos
+     - El Software Architect documenta la arquitectura actual
+     - El Tech Lead identifica areas de mejora
+     - Se genera PROJECT_PROFILE con el estado actual
+
+  c) SUMMARY + APROBACION:
+     - Muestra al usuario:
+       * Stack detectado
+       * Salud del proyecto (metricas)
+       * Deuda tecnica estimada
+       * Vulnerabilidades encontradas
+       * Recomendaciones priorizadas
+     - Pide aprobacion para empezar a mejorar
+
+PASO 4: Mejora continua
+  "Agrega logging estructurado con Serilog"
+  "Migra las consultas SQL a EF Core"
+  "Agrega pruebas unitarias para el modulo de usuarios"
+  "Revisa la seguridad del endpoint de login"
+
+EJEMPLO CONCRETO:
+
+  Desarrollador: "Analiza este proyecto legacy de cobranzas con AIBF"
+
+  opencode + aibf-central:
+    1. Coordinator recibe la solicitud
+    2. Backend Expert analiza el codigo .NET Framework existente
+    3. Database Expert revisa las consultas SQL (detecta N+1, indices faltantes)
+    4. Security Expert escanea vulnerabilidades
+    5. Performance Expert identifica cuellos de botella
+    6. Tech Lead genera plan de modernizacion:
+       - Fase 1: Migrar a .NET 8
+       - Fase 2: Reemplazar consultas SQL con EF Core
+       - Fase 3: Agregar pruebas unitarias
+       - Fase 4: Implementar CI/CD
+    7. Cada fase se ejecuta con aprobacion del usuario
+
+
+================================================================================
+7. COMO SE IMPLEMENTA EN UN PROYECTO?
+================================================================================
+
+REQUISITOS MINIMOS:
+  - Tener opencode instalado (CLI)
+  - Tener acceso al proyecto (local o repositorio)
+  - Tener configurado un modelo de IA compatible (OpenAI, Anthropic, etc.)
+
+PASOS DE INSTALACION:
+
+  1. OBTENER AIBF CENTRAL
+     Descargar o clonar aibf-central desde el repositorio o copia local.
+
+  2. COPIAR AL PROYECTO
+     Situacion A: Proyecto vacio / nuevo
+       > xcopy /E /I aibf-central\* C:\MiProyecto\
+       Esto copia TODO incluyendo .opencode/, docs/, etc.
+
+     Situacion B: Proyecto existente
+       > xcopy /E /I aibf-central\.opencode C:\MiProyecto\.opencode
+       Esto copia SOLO la carpeta .opencode/ con toda la inteligencia.
+       Opcional: copiar AGENTS.md si se desea configurar el asistente.
+
+  3. CONFIGURAR OPENCODE
+     opencode ya lee AGENTS.md automaticamente si existe en la raiz del proyecto.
+     - AGENTS.md le dice a opencode que use AIBF
+     - AIBF-COMPLETE.md es el contexto principal del framework
+     - .opencode/agents/coordinator.md define como orquestar
+
+  4. INICIAR LA PRIMERA SESION
+     Desde la terminal en la raiz del proyecto:
+     > opencode
+     > "Inicia este proyecto con AIBF"
+
+  5. VERIFICAR QUE FUNCIONA
+     opencode deberia empezar preguntando sobre el proyecto
+     (nombre, stack, dominio, equipo) en lugar de responder genericamente.
+
+QUE CAMBIA EN EL EQUIPO?
+  - Los desarrolladores se comunican con opencode como si fuera un equipo
+  - El asistente orquesta agentes especializados detras de escena
+  - Las decisiones importantes generan ADRs automaticamente
+  - La memoria del proyecto se mantiene entre sesiones
+  - El workflow de 12 fases asegura calidad consistente
+
+QUE NO CAMBIA?
+  - El codigo existente no se modifica
+  - Las herramientas de desarrollo siguen siendo las mismas
+  - El equipo sigue usando Git, CI/CD, etc.
+  - opencode sigue siendo el mismo CLI
+
+
+================================================================================
+8. FLUJO DE TRABAJO DIARIO CON AIBF
+================================================================================
+
+CICLO COMPLETO (12 fases - cada solicitud):
+
+  Fase 1:  BOOTSTRAP
+           Preparar la estructura base si no existe.
+           Solo se ejecuta en la primera sesion.
+
+  Fase 2:  DISCOVERY
+           Explorar el codigo, stack, dominio y contexto actual.
+           Preguntar al usuario si falta informacion.
+
+  Fase 3:  DEEP ANALYSIS
+           Analizar requisitos, restricciones y riesgos.
+           Revisar archivos afectados, entender dependencias.
+
+  Fase 4:  BUSINESS UNDERSTANDING
+           Comprender el valor de negocio y objetivos.
+           Asegurar que la solucion esta alineada con el negocio.
+
+  Fase 5:  QUESTIONS
+           Hacer preguntas de clarificacion al usuario.
+           Resolver ambiguedades antes de planificar.
+
+  Fase 6:  SUMMARY
+           Resumir el plan de accion para el usuario.
+           Incluir agentes que participaran, esfuerzo estimado.
+
+  Fase 7:  APPROVAL
+           Obtener aprobacion explicita del usuario.
+           Sin aprobacion, no se ejecuta nada.
+
+  Fase 8:  PLANNING
+           Seleccionar agentes y skills necesarios.
+           Descomponer la tarea en pasos concretos.
+           Cargar solo el contexto minimo necesario.
+
+  Fase 9:  EXECUTION
+           Implementar los cambios.
+           Los agentes trabajan en orden, compartiendo contexto.
+
+  Fase 10: VALIDATION
+           Verificar calidad: tests, linter, estandares.
+           Validar contra criterios de aceptacion.
+
+  Fase 11: DOCUMENTATION
+           Documentar cambios, actualizar README si aplica.
+           Generar ADR para decisiones importantes.
+
+  Fase 12: MEMORY UPDATE
+           Actualizar PROJECT_MEMORY con el resultado.
+           Archivar contexto de la sesion para futuro.
+
+COMANDOS RAPIDOS SUGERIDOS:
+
+  "Inicia este proyecto"         Bootstrap completo + Discovery
+  "Analiza el codigo actual"     Discovery del proyecto existente
+  "Agrega [funcionalidad]"       Ciclo completo de implementacion
+  "Revisa la calidad"            Auditoria del proyecto
+  "Optimiza rendimiento"         Analisis y optimizacion de performance
+  "Revisa seguridad"             Auditoria de seguridad
+  "Actualiza memoria"            Refresh de PROJECT_MEMORY
+  "Genera ADR para [decision]"   Architecture Decision Record
+  "Planifica el sprint"          Sprint planning con Scrum Master
+  "Que deuda tecnica tenemos?"   Escaneo y reporte de deuda tecnica
+
+
+================================================================================
+9. ROL DE LOS AGENTES Y COMO SE INVOCAN
+================================================================================
+
+Los agentes NO se invocan manualmente. El Coordinator los selecciona
+automaticamente segun la tarea:
+
+  TAREA                             AGENTE PRINCIPAL      AGENTES DE SOPORTE
+  --------------------------------------------------------------------------
+  Nueva funcionalidad               Coordinator            Software Architect
+                                                           Backend Expert
+                                                           Frontend Expert
+                                                           QA Expert
+
+  Bug critico                       QA Expert              Backend Expert
+                                                           Frontend Expert
+                                                           Database Expert
+
+  Problema de rendimiento           Performance Expert     Backend Expert
+                                                           Frontend Expert
+                                                           Database Expert
+
+  Deuda tecnica                     Tech Lead              Software Architect
+                                                           Backend Expert
+
+  Base de datos                     Database Expert        Backend Expert
+                                                           Performance Expert
+
+  Seguridad                         Security Expert        DevOps Expert
+                                                           Backend Expert
+
+  Infraestructura/Cloud             DevOps Expert          Cloud Architect
+                                                           SRE Expert
+
+  Datos/Analitica                   Data Scientist         Data Engineer
+                                                           Backend Expert
+
+  UX/UI                             UX Designer            Frontend Expert
+                                                           Product Owner
+
+  Proceso agil                      Scrum Master           Product Owner
+                                                           Tech Lead
+
+  Cumplimiento legal                Compliance Officer     Product Owner
+                                                           Security Expert
+
+  App movil                         Mobile Expert          Backend Expert
+                                                           UX Designer
+                                                           QA Expert
+
+  Nube/Migracion                    Cloud Architect        DevOps Expert
+                                                           SRE Expert
+                                                           Security Expert
+
+  Documentacion                    Documentation Expert    Tech Lead
+                                                           Software Architect
+
+  Optimizacion de tokens           AI Token Optimizer     Coordinator
+
+  Vision de producto               Product Owner          Business Analyst
+                                                           Tech Lead
+
+REGLAS DE ORQUESTACION:
+  - Nunca se invocan todos los agentes (solo los necesarios)
+  - Los agentes especializados NUNCA hablan directamente con el usuario
+  - Cada agente valida su propio output antes de pasarlo al siguiente
+  - El contexto compartido es el minimo necesario (no saturar tokens)
+
+
+================================================================================
+10. PERSONALIZACION Y EXTENSION
+================================================================================
+
+10.1. AGREGAR UN NUEVO AGENTE
+      Crear un archivo .md en .opencode/agents/ con la estructura:
+      - Mision
+      - Responsabilidades
+      - Cuando invocarlo
+      - Artefactos de salida
+      - Puertas de calidad
+
+10.2. AGREGAR UNA NUEVA SKILL
+      Crear un archivo .md en .opencode/skills/ con:
+      - Objetivo
+      - Buenas practicas
+      - Checklist
+      - Validaciones
+      - Cuando aplicar
+      Para skills expertas, usar .opencode/skills/expert/[categoria]/
+
+10.3. AGREGAR UN NUEVO DOMINIO DE NEGOCIO
+      Crear un archivo .md en .opencode/knowledge/dominios/
+      con informacion especifica del dominio (terminologia, reglas de negocio,
+      procesos tipicos, integraciones comunes)
+
+10.4. AGREGAR UN NUEVO STACK TECNOLOGICO
+      Crear una carpeta en .opencode/technology/[stack]/
+      con guias de componentes, routing, testing, performance, etc.
+
+10.5. MODIFICAR EL WORKFLOW
+      Editar .opencode/workflow/WORKFLOW.md para agregar/quitar fases
+      Editar .opencode/workflow/ORCHESTRATOR.md para cambiar reglas
+
+10.6. AGREGAR PLANTILLAS
+      Crear templates en .opencode/templates/ para:
+      - ADRs (Architecture Decision Records)
+      - User Stories
+      - API Specifications
+      - RFCs
+      - Incident Reports
+      - Post-mortems
+
+
+================================================================================
+11. PREGUNTAS FRECUENTES
+================================================================================
+
+P: aibf-central funciona con cualquier modelo de IA?
+R: Si, funciona con cualquier modelo que soporte opencode (GPT-4, Claude,
+   Gemini, etc.). El framework es agnostico al modelo.
+
+P: Ocupa mucho espacio?
+R: Aproximadamente 2MB en disco. Son archivos de texto markdown, no binarios.
+
+P: Ralentiza a opencode?
+R: No. El framework usa carga perezosa: solo se leen los archivos necesarios
+   para cada tarea, no todo simultaneamente.
+
+P: Puedo tener multiples proyectos con AIBF?
+R: Si. Cada proyecto copia su propia instancia de aibf-central. No hay conflicto.
+
+P: Que pasa si actualizo aibf-central?
+R: Puedes reemplazar .opencode/ con la nueva version. Los archivos de memoria
+   del proyecto (PROJECT_MEMORY, PROJECT_PROFILE) se conservan.
+
+P: Necesito conexion a internet?
+R: Depende del modelo de IA. El framework en si es 100% local (archivos .md).
+
+P: Puedo desactivar agentes que no uso?
+R: Si. El Coordinator solo invoca los agentes necesarios. Los no usados
+   simplemente no se cargan.
+
+P: Que tan detallados son los agentes?
+R: Cada agente tiene entre 42 y 91 lineas con: Mision, Responsabilidades,
+   Cuando invocarlo, Artefactos, Puertas de calidad, y tablas/checklists.
+
+P: Como se integra con Git?
+R: aibf-central no modifica Git. Todo el contenido de .opencode/ se versiona
+   normalmente. Se recomienda incluir .opencode/ en el repositorio.
+
+
+================================================================================
+12. PROMPT OPTIMIZADO PARA OPENCODE
+================================================================================
+
+Este prompt debe usarse como instruccion inicial cuando se configura opencode
+en un proyecto que usa AIBF Central. Copiar y pegar en la primera interaccion,
+o configurarlo como system prompt en opencode.json.
+
+--- INICIO DEL PROMPT ---
+
+Eres el Coordinator del AI Bootstrap Framework Central (aibf-central).
+Actuas como un team lead virtual que orquesta agentes especializados.
+
+INSTRUCCIONES OBLIGATORIAS:
+
+1. Lee AIBF-COMPLETE.md como contexto inicial del framework (si existe)
+2. Lee AGENTS.md para entender la configuracion del asistente
+3. Usa .opencode/workflow/WORKFLOW.md como workflow obligatorio (12 fases)
+4. Usa .opencode/workflow/ORCHESTRATOR.md para reglas de orquestacion
+5. Usa .opencode/agents/coordinator.md para tus reglas como Coordinator
+
+WORKFLOW OBLIGATORIO (cada solicitud):
+   Bootstrap → Discovery → Deep Analysis → Business Understanding
+   → Questions → Summary → Approval → Planning → Execution
+   → Validation → Documentation → Memory Update
+
+REGLAS CARDINALES:
+  - Nunca implementes sin entender el proyecto primero
+  - Siempre pregunta si hay incertidumbre o ambiguedad
+  - Usa minimo contexto posible, maxima eficiencia de tokens
+  - Los agentes especializados NUNCA hablan directamente con el usuario
+  - Toda decision importante genera un ADR
+  - Siempre pide aprobacion antes de cambios relevantes
+
+SELECCION DE AGENTES:
+  Segun la tarea, selecciona SOLO los agentes necesarios de .opencode/agents/:
+  - Funcionalidad nueva → Software Architect + Backend/Frontend Expert + QA
+  - Bug → QA Expert + Backend/Frontend Expert + Database Expert
+  - Rendimiento → Performance Expert + Backend/Frontend Expert
+  - Seguridad → Security Expert + DevOps Expert
+  - Base de datos → Database Expert + Backend Expert
+  - Infraestructura → DevOps Expert + SRE Expert
+  - UX/UI → UX Designer + Frontend Expert
+  - Proceso agil → Scrum Master + Product Owner
+  - Deuda tecnica → Tech Lead + Software Architect
+  - Datos/ML → Data Scientist + Data Engineer
+  - Compliance → Compliance Officer + Product Owner
+  - Mobile → Mobile Expert + Backend Expert + UX Designer
+  - Cloud → Cloud Architect + DevOps Expert + SRE Expert
+  - Documentacion → Documentation Expert + Tech Lead
+
+MEMORIA:
+  Lee .opencode/memory/PROJECT_PROFILE.md si existe al inicio
+  Lee .opencode/memory/PROJECT_MEMORY.md al inicio de cada sesion
+  Actualiza PROJECT_MEMORY al final de cada ciclo
+
+SKILLS:
+  Usa skills de .opencode/skills/expert/ segun la tarea
+  No cargues todas las skills, solo las necesarias
+
+FORMATO DE RESPUESTA:
+  - Siempre estructura tus respuestas claramente
+  - Indica que fase del workflow estas ejecutando
+  - Menciona que agente estas invocando cuando corresponda
+  - Al final de cada ciclo, resume lo completado y el estado de la memoria
+
+PRIMERA INTERACCION:
+  Si PROJECT_PROFILE no existe, ejecuta Discovery completo:
+  1. Pregunta al usuario: nombre del proyecto, stack tecnologico,
+     dominio de negocio, tipo de proyecto (nuevo/existente)
+  2. Analiza la estructura del proyecto si existe
+  3. Genera PROJECT_PROFILE y PROJECT_MEMORY
+  4. Muestra resumen y pide aprobacion
+
+--- FIN DEL PROMPT ---
+
+
+================================================================================
+                        FIN DE LA CAPACITACION
+                    AI Bootstrap Framework Central v1.0
+================================================================================
+
+Para mas informacion:
+- Documentacion: docs/AIBF-GUIA-USO.md
+- Plan de acoplamiento: docs/AIBF-COUPLING-PLAN.md
+- Framework completo: AIBF-COMPLETE.md
+- Configuracion del asistente: AGENTS.md

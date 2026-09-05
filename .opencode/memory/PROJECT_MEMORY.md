@@ -1,38 +1,50 @@
-# PROJECT MEMORY
+# Memoria del Proyecto
 
-## Resumen Ejecutivo
-App multi-tenant para pedidos de suplementos. Originalmente "TopeDeBar" (restaurante), migrado a "Suplementos AR". Cleanup de boilerplate AIBF completado.
+## Última sesión
+- **Fecha**: 2026-07-14
+- **Tarea realizada**: Optimización completa del framework + Discovery Protocol para proyectos existentes
+- **Agentes involucrados**: Coordinator
 
-## Últimas Acciones (2026-07-10)
-- Identidad de marca actualizada a **TITAN FUEL SUPLEMENTOS** (basada en logo oficial):
-  - Colores corporativos: Rojo eléctrico (`#FF1E27`), Naranja llama (`#FF5C00`) y negro industrial deportivo.
-  - Logo copiado de `infoBase/logo.jfif` a `public/logo.jfif` y configurado como favicon y logo en Header.
-  - Datos de Contacto y Cobro configurados:
-    - **Teléfono / WhatsApp**: `3814751620` (con enlace directo `wa.me`)
-    - **Alias de Cobro (MercadoPago/Transferencia)**: `strong.gramlo`
-  - Banners actualizados al rubro de suplementación de alta gama (*Combustible de Titanes*, *Potencia tu Rendimiento*, *100% Pura Creatina & Whey*).
-- Eliminado boilerplate AIBF (~300+ archivos)
-- Reestructurado proyecto (sql/, assets limpios)
-- Procesado catálogo oficial PDF `Suplement Facts.xlsx - Lisa Mayorista (1).pdf` de `infoBase/`:
-  - Extraídos los **318 productos** exactos sin omitir ninguno
-  - Clasificados en **9 categorías oficiales** con fotos de alta calidad, precios exactos, códigos y descripciones
-  - Generado archivo SQL oficial [seed_suplementos.sql](file:///c:/Users/EDC/Desktop/AndresPedidos/sql/seed_suplementos.sql)
-- Actualizado [ClientHome.tsx](file:///c:/Users/EDC/Desktop/AndresPedidos/src/pages/ClientHome.tsx) con soporte para las 9 categorías, filtros por marca y palabras clave rápidas.
+## Cambios realizados
 
-## Últimas Acciones (2026-07-13)
-- Implementación de redondeo de precios hacia arriba con números enteros (`Math.ceil`):
-  - Utilidad centralizada `src/utils/formatPrice.ts` (`roundUpPrice` y `formatPrice`).
-  - Aplicado en todas las vistas de clientes (`ClientHome`, `ProductModal`, `CartModal`, `OrderTrackerModal`), POS (`POSHome`) y Panel Admin (`CatalogManager`, `AnalyticsDashboard`).
-- Integración de logotipos de marca oficiales en imagen (`src/utils/brandLogos.tsx`):
-  - Configurado el logo de **NUTRILAB** indicado por el usuario y logotipos oficiales para las demás marcas en un contenedor estilo insignia oficial (`bg-white/95 rounded-lg shadow-md`) con fallback automático a SVG.
+### Discovery Protocol (nuevo)
+Creado `workflow/DISCOVERY_PROTOCOL.md` — protocolo de análisis experto para proyectos existentes:
+- **F1 - Stack Detection**: Lenguajes, frameworks, BD, cloud, CI/CD, Docker, testing, Supabase
+- **F2 - Architecture Detection**: Estilo, capas, patrones, dependencias, ADRs, anti-patrones
+- **F3 - Code Quality Analysis**: Tests, cobertura, linter, complejidad, duplicación
+- **F4 - Security Audit**: Secretos, RLS, CORS, headers, auth, dependencias vulnerables
+- **F5 - DB & Performance**: Esquema, índices, N+1, bundle size, Core Web Vitals
+- **F6 - Domain & Business**: Actores, casos de uso, reglas de negocio, integraciones, glosario
+- **F7 - Project Health Report**: Consolidación en reporte único con riesgos y mejoras priorizadas
 
-## Decisiones Importantes
-- ADR-001: Migrar de restaurante a suplementos deportivos
-- ADR-002: Mantener multi-tenencia por slug (ya implementada)
-- ADR-003: Identidad visual deportiva de alta intensidad "Titan Fuel Suplementos"
-- ADR-004: Importación 100% fiel del catálogo mayorista Lisa Mayorista (318 productos en 9 categorías)
-- ADR-005: Redondeo de todos los precios del sistema hacia arriba al número entero superior (`Math.ceil`) y visualización de logotipos oficiales en imagen en `BrandLogo`.
+### Ruta B del coordinator mejorada
+- **Discovery Sprint obligatorio**: ejecuta el protocolo completo antes de tocar código
+- **Presentación del Health Report**: muestra hallazgos, riesgos y mejoras al usuario
+- **Aprobación explícita requerida**: nada se ejecuta sin aprobación
+- **Post-análisis**: mini-discovery después de implementar para verificar calidad
 
-## Pendientes
-- Configurar RLS policies en Supabase
-- Desplegar a producción
+### 20 SKILLS pobladas
+Todas las skills de architecture, business, discovery, optimization, documentation con contenido real.
+
+### Engine mejorado
+CONTEXT_ROUTING y MULTI_AI_ORCHESTRATION expandidos.
+
+### Prompts poblados
+ARCHITECT_PROMPT, ECOMMERCE_PROMPT, TRAVEL_PROMPT ahora con contenido completo.
+
+### Memory poblada
+DECISIONS, GLOSSARY, RISKS, ROADMAP ahora con estructura completa.
+
+### AGENTS.md actualizado
+Referencias a DISCOVERY_PROTOCOL y supabase-expert agregadas.
+
+## Estado actual
+- **Fase del proyecto**: Framework completamente optimizado y protocolizado
+- **Skills**: 24 skills con contenido real
+- **Workflow**: 10 archivos incluyendo el nuevo Discovery Protocol
+- **Agentes**: 23 agentes, todos con contenido sustancial
+
+## Próximos pasos
+- [x] Framework completo optimizado
+- [x] Discovery Protocol para proyectos existentes
+- [ ] Probar el flujo completo con un proyecto webapp real

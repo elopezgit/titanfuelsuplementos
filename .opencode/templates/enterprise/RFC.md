@@ -1,0 +1,4 @@
+# RFC
+
+## Problema
+## Propuesta

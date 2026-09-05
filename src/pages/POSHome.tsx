@@ -4,7 +4,6 @@ import { getEmpresaId } from '../lib/getEmpresa';
 import { useCart } from '../lib/CartContext';
 import { Search, Plus, Minus, Trash2, Wallet, CreditCard, Send, Coffee, Utensils } from 'lucide-react';
 import { formatPrice, roundUpPrice } from '../utils/formatPrice';
-import { FALLBACK_EMPRESA, FALLBACK_CATEGORIES, FALLBACK_PRODUCTS } from '../data/fallbackCatalog';
 
 interface Category {
   id: string;
@@ -21,6 +20,7 @@ interface Product {
   image_url?: string;
   is_active: boolean;
   code?: string;
+  price_half?: number | null;
 }
 
 export default function POSHome({ empresaSlug }: { empresaSlug: string }) {
@@ -46,9 +46,7 @@ export default function POSHome({ empresaSlug }: { empresaSlug: string }) {
     async function loadData() {
       try {
         let id = await getEmpresaId(empresaSlug);
-        if (!id) {
-          id = FALLBACK_EMPRESA.id;
-        }
+        if (!id) return;
         
         setEmpresaId(id);
 
@@ -57,30 +55,19 @@ export default function POSHome({ empresaSlug }: { empresaSlug: string }) {
           supabase.from('products').select('*').eq('empresa_id', id).eq('is_active', true)
         ]);
 
-        if (cats.data && cats.data.length > 0) {
+        if (cats.data) {
           setCategories(cats.data);
-        } else {
-          setCategories(FALLBACK_CATEGORIES);
         }
 
-        if (prods.data && prods.data.length > 0) {
+        if (prods.data) {
           setProducts(prods.data.map((p: any) => ({
             ...p,
-            price: roundUpPrice(p.price)
-          })));
-        } else {
-          setProducts(FALLBACK_PRODUCTS.map((p: any) => ({
-            ...p,
-            price: roundUpPrice(p.price)
+            price: roundUpPrice(p.price),
+            price_half: p.price_half ? roundUpPrice(p.price_half) : null
           })));
         }
       } catch (err: any) {
-        setCategories(FALLBACK_CATEGORIES);
-        setProducts(FALLBACK_PRODUCTS.map((p: any) => ({
-          ...p,
-          price: roundUpPrice(p.price)
-        })));
-        setError(null);
+        setError(err.message || 'Error cargando datos');
       } finally {
         setLoading(false);
       }
@@ -104,7 +91,8 @@ export default function POSHome({ empresaSlug }: { empresaSlug: string }) {
       const codeToSearch = fastCode.trim().toLowerCase();
       const prod = products.find(p => p.code?.toLowerCase() === codeToSearch);
       if (prod) {
-        addToCart(prod, 1);
+        const effectivePrice = prod.price_half || prod.price;
+        addToCart({ ...prod, price: effectivePrice }, 1);
         setFastCode('');
       } else {
         alert('Producto no encontrado con el código: ' + codeToSearch);
@@ -205,7 +193,10 @@ export default function POSHome({ empresaSlug }: { empresaSlug: string }) {
               return (
                 <div 
                   key={product.id} 
-                  onClick={() => addToCart(product, 1)}
+                  onClick={() => {
+                    const effectivePrice = product.price_half || product.price;
+                    addToCart({ ...product, price: effectivePrice }, 1);
+                  }}
                   className="bg-white rounded-xl shadow-sm border border-slate-200 p-3 flex flex-col cursor-pointer hover:border-primary hover:shadow-md transition-all active:scale-95 group relative"
                 >
                   {qty > 0 && (
@@ -221,7 +212,14 @@ export default function POSHome({ empresaSlug }: { empresaSlug: string }) {
                     )}
                   </div>
                   <h3 className="font-bold text-slate-800 text-sm leading-tight mb-1 line-clamp-2 flex-1">{product.name}</h3>
-                  <p className="font-black text-slate-800">${formatPrice(product.price)}</p>
+                  {product.price_half ? (
+                    <div>
+                      <p className="font-semibold text-slate-500 text-xs line-through">${formatPrice(product.price)}</p>
+                      <p className="font-black text-primary">${formatPrice(product.price_half)}</p>
+                    </div>
+                  ) : (
+                    <p className="font-black text-slate-800">${formatPrice(product.price)}</p>
+                  )}
                 </div>
               );
             })}

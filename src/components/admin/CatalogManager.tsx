@@ -3,7 +3,6 @@ import { supabase } from '../../lib/supabase';
 import { getEmpresaId } from '../../lib/getEmpresa';
 import { Trash2, Edit, Plus } from 'lucide-react';
 import { formatPrice, roundUpPrice } from '../../utils/formatPrice';
-import { FALLBACK_EMPRESA, FALLBACK_CATEGORIES, FALLBACK_PRODUCTS } from '../../data/fallbackCatalog';
 
 interface Product {
   id: string;
@@ -14,6 +13,7 @@ interface Product {
   is_active: boolean;
   image_url?: string;
   code?: string;
+  price_half?: number | null;
 }
 
 interface Category {
@@ -27,7 +27,7 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
   const [categories, setCategories] = useState<Category[]>([]);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ id: '', name: '', description: '', price: '', category_id: '', image_url: '', code: '', is_active: true });
+  const [formData, setFormData] = useState({ id: '', name: '', description: '', price: '', price_half: '', category_id: '', image_url: '', code: '', is_active: true });
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -37,7 +37,7 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
   useEffect(() => {
     async function init() {
       let id = await getEmpresaId(empresaSlug);
-      if (!id) id = FALLBACK_EMPRESA.id;
+      if (!id) return;
       setEmpresaId(id);
       fetchData(id);
     }
@@ -51,20 +51,15 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
         supabase.from('products').select('*').eq('empresa_id', id).order('name')
       ]);
       
-      if (cats.data && cats.data.length > 0) {
+      if (cats.data) {
         setCategories(cats.data);
-      } else {
-        setCategories(FALLBACK_CATEGORIES);
       }
 
-      if (prods.data && prods.data.length > 0) {
+      if (prods.data) {
         setProducts(prods.data);
-      } else {
-        setProducts(FALLBACK_PRODUCTS);
       }
     } catch (e) {
-      setCategories(FALLBACK_CATEGORIES);
-      setProducts(FALLBACK_PRODUCTS);
+      console.error(e);
     }
   };
 
@@ -77,6 +72,7 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
       name: formData.name,
       description: formData.description,
       price: roundUpPrice(formData.price),
+      price_half: formData.price_half ? roundUpPrice(formData.price_half) : null,
       category_id: formData.category_id || null,
       image_url: formData.image_url || null,
       code: formData.code || null,
@@ -96,7 +92,7 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
 
     if (!error) {
       setIsModalOpen(false);
-      setFormData({ id: '', name: '', description: '', price: '', category_id: '', image_url: '', code: '', is_active: true });
+      setFormData({ id: '', name: '', description: '', price: '', price_half: '', category_id: '', image_url: '', code: '', is_active: true });
       fetchData(empresaId);
     } else {
       alert("Error al guardar: " + error.message);
@@ -109,6 +105,7 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
       name: p.name,
       description: p.description || '',
       price: p.price.toString(),
+      price_half: p.price_half ? p.price_half.toString() : '',
       category_id: p.category_id || '',
       image_url: p.image_url || '',
       code: p.code || '',
@@ -149,7 +146,7 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
         </div>
         <button 
           onClick={() => {
-            setFormData({ id: '', name: '', description: '', price: '', category_id: '', image_url: '', code: '', is_active: true });
+            setFormData({ id: '', name: '', description: '', price: '', price_half: '', category_id: '', image_url: '', code: '', is_active: true });
             setIsModalOpen(true);
           }}
           className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg shadow-sm font-medium transition-colors flex items-center gap-2"
@@ -215,7 +212,10 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
                     </div>
                   </td>
                   <td className="p-4 text-slate-600">{cat ? cat.name : '-'}</td>
-                  <td className="p-4 font-bold text-slate-800">${formatPrice(product.price)}</td>
+                  <td className="p-4 font-bold text-slate-800">
+                    ${formatPrice(product.price)}
+                    {product.price_half && <span className="text-[#FF1E27] ml-2 font-black text-sm block">Oferta: ${formatPrice(product.price_half)}</span>}
+                  </td>
                   <td className="p-4">
                     <span className={`px-2 py-1 rounded-full text-xs font-bold ${product.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
                       {product.is_active ? 'Activo' : 'Oculto'}
@@ -262,10 +262,14 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Precio ($)</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Precio Normal ($)</label>
                   <input required type="number" min="0" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full p-2 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:border-primary" />
                 </div>
                 <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1 text-[#FF1E27]">Precio Oferta ($)</label>
+                  <input type="number" min="0" value={formData.price_half} onChange={e => setFormData({...formData, price_half: e.target.value})} className="w-full p-2 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:border-primary" placeholder="Opcional" />
+                </div>
+                <div className="col-span-2">
                   <label className="block text-sm font-medium text-slate-700 mb-1">Categoría</label>
                   <select required value={formData.category_id} onChange={e => setFormData({...formData, category_id: e.target.value})} className="w-full p-2 border border-slate-200 rounded-lg bg-white text-slate-800 focus:outline-none focus:border-primary">
                     <option value="">Seleccionar...</option>
