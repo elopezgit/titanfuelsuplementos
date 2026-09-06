@@ -3,6 +3,8 @@ import { supabase } from '../../lib/supabase';
 import { getEmpresaId } from '../../lib/getEmpresa';
 import { Trash2, Edit, Plus } from 'lucide-react';
 import { formatPrice, roundUpPrice } from '../../utils/formatPrice';
+import { getProductBrand, getAvailableBrands } from '../../utils/brandUtils';
+import BulkEditor from './BulkEditor';
 
 interface Product {
   id: string;
@@ -26,13 +28,17 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   
+  const [viewMode, setViewMode] = useState<'list' | 'bulk'>('list');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({ id: '', name: '', description: '', price: '', price_half: '', category_id: '', image_url: '', code: '', is_active: true });
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
+  const [filterBrand, setFilterBrand] = useState('todas');
   const [sortBy, setSortBy] = useState('name_asc');
+
+  const availableBrands = getAvailableBrands(products);
 
   useEffect(() => {
     async function init() {
@@ -130,7 +136,8 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
                           (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
                           (p.code && p.code.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesCategory = filterCategory ? p.category_id === filterCategory : true;
-    return matchesSearch && matchesCategory;
+    const matchesBrand = filterBrand === 'todas' ? true : getProductBrand(p) === filterBrand;
+    return matchesSearch && matchesCategory && matchesBrand;
   }).sort((a, b) => {
     if (sortBy === 'price_asc') return a.price - b.price;
     if (sortBy === 'price_desc') return b.price - a.price;
@@ -139,24 +146,52 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
 
   return (
     <div className="p-8">
-      <header className="mb-8 flex justify-between items-center">
+      <header className="mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
           <h2 className="text-3xl font-bold text-slate-800">Gestión de Catálogo</h2>
           <p className="text-slate-500 mt-1">Administra tus productos y categorías.</p>
         </div>
-        <button 
-          onClick={() => {
-            setFormData({ id: '', name: '', description: '', price: '', price_half: '', category_id: '', image_url: '', code: '', is_active: true });
-            setIsModalOpen(true);
-          }}
-          className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg shadow-sm font-medium transition-colors flex items-center gap-2"
-        >
-          <Plus size={20} />
-          Nuevo Producto
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="bg-slate-200/60 p-1 rounded-lg flex items-center">
+            <button 
+              onClick={() => setViewMode('list')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${viewMode === 'list' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+              Lista
+            </button>
+            <button 
+              onClick={() => setViewMode('bulk')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${viewMode === 'bulk' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+              Edición Masiva
+            </button>
+          </div>
+          
+          {viewMode === 'list' && (
+            <button 
+              onClick={() => {
+                setFormData({ id: '', name: '', description: '', price: '', price_half: '', category_id: '', image_url: '', code: '', is_active: true });
+                setIsModalOpen(true);
+              }}
+              className="bg-primary hover:bg-primary-hover text-black px-4 py-2 rounded-lg shadow-sm font-medium transition-colors flex items-center gap-2"
+            >
+              <Plus size={20} />
+              Nuevo Producto
+            </button>
+          )}
+        </div>
       </header>
-      
-      {/* Filters Toolbar */}
+
+      {viewMode === 'bulk' ? (
+        <BulkEditor 
+          empresaId={empresaId} 
+          products={products} 
+          categories={categories} 
+          onUpdate={() => fetchData(empresaId)} 
+        />
+      ) : (
+        <>
+          {/* Filters Toolbar */}
       <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-6 flex flex-col md:flex-row gap-4">
         <input 
           type="text" 
@@ -168,15 +203,23 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
         <select 
           value={filterCategory} 
           onChange={e => setFilterCategory(e.target.value)}
-          className="p-2 border border-slate-200 rounded-lg text-slate-800 bg-white min-w-[200px]"
+          className="p-2 border border-slate-200 rounded-lg text-slate-800 bg-white min-w-[150px]"
         >
           <option value="">Todas las Categorías</option>
           {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
         <select 
+          value={filterBrand} 
+          onChange={e => setFilterBrand(e.target.value)}
+          className="p-2 border border-slate-200 rounded-lg text-slate-800 bg-white min-w-[150px]"
+        >
+          <option value="todas">Todas las Marcas</option>
+          {availableBrands.map(b => <option key={b} value={b}>{b}</option>)}
+        </select>
+        <select 
           value={sortBy} 
           onChange={e => setSortBy(e.target.value)}
-          className="p-2 border border-slate-200 rounded-lg text-slate-800 bg-white"
+          className="p-2 border border-slate-200 rounded-lg text-slate-800 bg-white min-w-[150px]"
         >
           <option value="name_asc">Nombre (A-Z)</option>
           <option value="price_asc">Precio (Menor a Mayor)</option>
@@ -240,6 +283,8 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
           </tbody>
         </table>
       </div>
+      </>
+      )}
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">

@@ -1,26 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&family=Russo+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #FF1E27; /* Rojo eléctrico Titan Fuel */
+  --color-primary: #FF1E27; /* Rojo Titan Fuel */
   --color-primary-hover: #E11D48;
-  --color-secondary: #FF5C00; /* Naranja llama de poder */
-  --color-surface: #12121A; /* Superficies metálicas oscuras */
-  --color-surface-card: #181824; /* Tarjetas de producto */
-  --color-background: #0A0A0F; /* Fondo negro obsidiana profundo */
+  --color-secondary: #FF5C00; /* Naranja acento */
+  --color-surface: #121217; /* Superficies cristal */
+  --color-surface-card: #18181B; /* Tarjetas de producto premium */
+  --color-background: #09090B; /* Fondo obsidiana */
 }
 
 @layer base {
   body {
-    @apply bg-background text-slate-100 font-sans antialiased selection:bg-primary/30 selection:text-white;
+    @apply bg-background text-slate-200 font-sans antialiased selection:bg-primary/20 selection:text-primary;
     font-family: 'Outfit', sans-serif;
     overscroll-behavior-y: none; /* Prevents pull-to-refresh bounce on mobile apps */
   }
   
   h1, h2, h3, h4, h5, h6, .font-display {
-    font-family: 'Russo One', sans-serif;
-    letter-spacing: 0.03em;
-    font-weight: 400;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: -0.03em;
   }
 }
 

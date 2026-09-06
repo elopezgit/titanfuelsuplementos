@@ -44,7 +44,7 @@ export default function AdminDashboard() {
     
     // Bypass local / acceso rápido para administración y roles internos
     if (
-      (username === 'admin' && (password === 'admin' || password === 'admin123' || password === 'titanfuel')) ||
+      (username === 'admin' && password === '123456') ||
       (username === 'cocina' && password === 'cocina') || 
       (username === 'operador' && password === 'operador')
     ) {
