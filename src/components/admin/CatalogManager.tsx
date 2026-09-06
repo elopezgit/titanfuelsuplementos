@@ -5,12 +5,14 @@ import { Trash2, Edit, Plus } from 'lucide-react';
 import { formatPrice, roundUpPrice } from '../../utils/formatPrice';
 import { getProductBrand, getAvailableBrands } from '../../utils/brandUtils';
 import BulkEditor from './BulkEditor';
+import SmartSyncPanel from './SmartSyncPanel';
 
 interface Product {
   id: string;
   name: string;
   description: string;
   price: number;
+  cost?: number;
   category_id: string;
   is_active: boolean;
   image_url?: string;
@@ -28,7 +30,7 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   
-  const [viewMode, setViewMode] = useState<'list' | 'bulk'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'bulk' | 'sync'>('sync');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({ id: '', name: '', description: '', price: '', price_half: '', category_id: '', image_url: '', code: '', is_active: true });
 
@@ -165,6 +167,12 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
             >
               Edición Masiva
             </button>
+            <button 
+              onClick={() => setViewMode('sync')}
+              className={`px-4 py-2 rounded-md text-sm font-bold transition-colors flex items-center gap-1 ${viewMode === 'sync' ? 'bg-[#FF1E27] shadow-sm text-white' : 'text-[#FF1E27] hover:bg-[#FF1E27]/10'}`}
+            >
+              ⚡ Smart Sync
+            </button>
           </div>
           
           {viewMode === 'list' && (
@@ -188,6 +196,17 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
           products={products} 
           categories={categories} 
           onUpdate={() => fetchData(empresaId)} 
+        />
+      ) : viewMode === 'sync' ? (
+        <SmartSyncPanel
+          empresaId={empresaId}
+          products={products}
+          categories={categories}
+          onUpdate={() => {
+            fetchData(empresaId);
+            setViewMode('list');
+          }}
+          onCancel={() => setViewMode('list')}
         />
       ) : (
         <>

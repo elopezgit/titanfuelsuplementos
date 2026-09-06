@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { roundUpPrice, formatPrice } from '../../utils/formatPrice';
 import { getProductBrand, getAvailableBrands } from '../../utils/brandUtils';
-import { Search, Filter, CheckSquare, Square, Save, AlertCircle } from 'lucide-react';
+import { Search, Filter, CheckSquare, Square, Save, AlertCircle, Calculator } from 'lucide-react';
 
 interface Product {
   id: string;
   name: string;
   description: string;
   price: number;
+  cost?: number; // Nueva columna
   category_id: string;
   is_active: boolean;
   image_url?: string;
@@ -35,18 +36,19 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
   const [filterCategory, setFilterCategory] = useState('');
   const [filterBrand, setFilterBrand] = useState('todas');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
+  const [filterCost, setFilterCost] = useState<'all' | 'under_20k' | 'over_20k'>('all');
 
   const availableBrands = getAvailableBrands(initialProducts);
 
   // Actions
-  const [actionType, setActionType] = useState<'price_rule' | 'image' | 'category' | 'status'>('price_rule');
+  type ActionType = 'price_add_fixed' | 'price_sub_fixed' | 'price_add_percent' | 'price_sub_percent' | 'price_set_fixed' | 'price_rule_classic' | 'image' | 'category' | 'status';
+  const [actionType, setActionType] = useState<ActionType>('price_rule_classic');
   const [actionValue, setActionValue] = useState('');
-  const [actionValue2, setActionValue2] = useState(true); // Para estado
+  const [actionValue2, setActionValue2] = useState(true); // Para estado boolean
   const [isApplying, setIsApplying] = useState(false);
 
   useEffect(() => {
     setProducts(initialProducts);
-    // Remove selection if product no longer exists
     setSelectedIds(prev => {
       const newSet = new Set<string>();
       prev.forEach(id => {
@@ -62,7 +64,13 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
     const matchesCategory = filterCategory ? p.category_id === filterCategory : true;
     const matchesBrand = filterBrand === 'todas' ? true : getProductBrand(p) === filterBrand;
     const matchesStatus = filterStatus === 'all' ? true : filterStatus === 'active' ? p.is_active : !p.is_active;
-    return matchesSearch && matchesCategory && matchesBrand && matchesStatus;
+    
+    let matchesCost = true;
+    const c = p.cost || 0;
+    if (filterCost === 'under_20k') matchesCost = c < 20000;
+    if (filterCost === 'over_20k') matchesCost = c >= 20000;
+
+    return matchesSearch && matchesCategory && matchesBrand && matchesStatus && matchesCost;
   });
 
   const handleSelectAll = () => {
@@ -75,39 +83,48 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
 
   const toggleSelect = (id: string) => {
     const newSet = new Set(selectedIds);
-    if (newSet.has(id)) {
-      newSet.delete(id);
-    } else {
-      newSet.add(id);
-    }
+    if (newSet.has(id)) newSet.delete(id);
+    else newSet.add(id);
     setSelectedIds(newSet);
   };
 
   const applyBulkAction = async () => {
     if (selectedIds.size === 0) return alert('Selecciona al menos un producto.');
+    
+    // Validaciones
+    if (actionType.startsWith('price_') && actionType !== 'price_rule_classic') {
+        if (!actionValue || isNaN(Number(actionValue))) return alert('Ingresa un valor numérico válido.');
+    }
+
     if (!window.confirm(`¿Estás seguro de aplicar esta acción a ${selectedIds.size} productos?`)) return;
 
     setIsApplying(true);
+    const val = Number(actionValue);
 
     const selectedProducts = products.filter(p => selectedIds.has(p.id));
     const payload = selectedProducts.map(p => {
       let updatedProduct = { ...p };
+      const baseCost = p.cost || 0; // Calculamos el precio en base al COSTO
 
       switch (actionType) {
-        case 'price_rule':
-          if (p.price < 20000) {
-            updatedProduct.price = roundUpPrice(p.price + 3000);
-          } else {
-            updatedProduct.price = roundUpPrice(p.price * 1.20);
-          }
-          // Aplica también al precio de oferta si lo tiene
-          if (p.price_half && p.price_half > 0) {
-              if (p.price_half < 20000) {
-                updatedProduct.price_half = roundUpPrice(p.price_half + 3000);
-              } else {
-                updatedProduct.price_half = roundUpPrice(p.price_half * 1.20);
-              }
-          }
+        case 'price_rule_classic':
+          if (baseCost < 20000) updatedProduct.price = roundUpPrice(baseCost + 3000);
+          else updatedProduct.price = roundUpPrice(baseCost * 1.20);
+          break;
+        case 'price_add_fixed':
+          updatedProduct.price = roundUpPrice(baseCost + val);
+          break;
+        case 'price_sub_fixed':
+          updatedProduct.price = roundUpPrice(Math.max(0, baseCost - val));
+          break;
+        case 'price_add_percent':
+          updatedProduct.price = roundUpPrice(baseCost + (baseCost * (val / 100)));
+          break;
+        case 'price_sub_percent':
+          updatedProduct.price = roundUpPrice(Math.max(0, baseCost - (baseCost * (val / 100))));
+          break;
+        case 'price_set_fixed':
+          updatedProduct.price = roundUpPrice(val);
           break;
         case 'image':
           updatedProduct.image_url = actionValue;
@@ -123,7 +140,6 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
     });
 
     try {
-      // Usamos .upsert para enviar todos de golpe, asegurando empresa_id para RLS
       const { error } = await supabase.from('products').upsert(
         payload.map(p => ({
           id: p.id,
@@ -131,6 +147,7 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
           name: p.name,
           description: p.description,
           price: p.price,
+          cost: p.cost,
           price_half: p.price_half,
           category_id: p.category_id,
           is_active: p.is_active,
@@ -141,9 +158,9 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
 
       if (error) throw error;
       
-      alert('¡Actualización masiva exitosa!');
+      alert('¡Actualización masiva de precios exitosa!');
       setSelectedIds(new Set());
-      onUpdate(); // Recargar datos en el padre
+      onUpdate();
     } catch (e: any) {
       console.error(e);
       alert('Error: ' + e.message);
@@ -153,7 +170,7 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col md:flex-row min-h-[600px]">
+    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col lg:flex-row min-h-[700px]">
       
       {/* Panel Izquierdo: Selección y Filtros */}
       <div className="flex-1 flex flex-col border-r border-slate-200">
@@ -161,7 +178,7 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
           <h3 className="font-bold text-slate-800 flex items-center gap-2">
             <Filter size={18} /> Filtrar Catálogo
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
             <div className="relative">
               <Search className="absolute left-3 top-2.5 text-slate-400" size={16} />
               <input 
@@ -169,13 +186,13 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
                 placeholder="Buscar por nombre o cód..." 
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:border-primary"
+                className="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:border-[#FF1E27]"
               />
             </div>
             <select 
               value={filterCategory} 
               onChange={e => setFilterCategory(e.target.value)}
-              className="w-full p-2 border border-slate-200 rounded-lg text-sm text-slate-800 bg-white"
+              className="w-full p-2 border border-slate-200 rounded-lg text-sm text-slate-800 bg-white focus:outline-none focus:border-[#FF1E27]"
             >
               <option value="">Todas las Categorías</option>
               {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -183,15 +200,24 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
             <select 
               value={filterBrand} 
               onChange={e => setFilterBrand(e.target.value)}
-              className="w-full p-2 border border-slate-200 rounded-lg text-sm text-slate-800 bg-white"
+              className="w-full p-2 border border-slate-200 rounded-lg text-sm text-slate-800 bg-white focus:outline-none focus:border-[#FF1E27]"
             >
               <option value="todas">Todas las Marcas</option>
               {availableBrands.map(b => <option key={b} value={b}>{b}</option>)}
             </select>
             <select 
+              value={filterCost} 
+              onChange={e => setFilterCost(e.target.value as any)}
+              className="w-full p-2 border border-slate-200 rounded-lg text-sm text-slate-800 bg-white focus:outline-none focus:border-[#FF1E27]"
+            >
+              <option value="all">Todos los Costos</option>
+              <option value="under_20k">Costo &lt; $20.000</option>
+              <option value="over_20k">Costo &ge; $20.000</option>
+            </select>
+            <select 
               value={filterStatus} 
               onChange={e => setFilterStatus(e.target.value as any)}
-              className="w-full p-2 border border-slate-200 rounded-lg text-sm text-slate-800 bg-white"
+              className="w-full p-2 border border-slate-200 rounded-lg text-sm text-slate-800 bg-white focus:outline-none focus:border-[#FF1E27]"
             >
               <option value="all">Todos los Estados</option>
               <option value="active">Activos</option>
@@ -208,13 +234,14 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
                   <tr>
                     <th className="p-3 w-12 text-center cursor-pointer hover:bg-slate-200 transition-colors" onClick={handleSelectAll}>
                       {selectedIds.size === filteredProducts.length && filteredProducts.length > 0 ? (
-                        <CheckSquare size={18} className="text-primary mx-auto" />
+                        <CheckSquare size={18} className="text-[#FF1E27] mx-auto" />
                       ) : (
                         <Square size={18} className="text-slate-400 mx-auto" />
                       )}
                     </th>
                     <th className="p-3 font-medium">Producto</th>
-                    <th className="p-3 font-medium">Precio</th>
+                    <th className="p-3 font-medium text-slate-400">Costo Base</th>
+                    <th className="p-3 font-medium text-[#FF1E27]">Precio Venta</th>
                     <th className="p-3 font-medium">Estado</th>
                   </tr>
                 </thead>
@@ -223,7 +250,7 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
                     <tr key={p.id} className="hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => toggleSelect(p.id)}>
                       <td className="p-3 text-center">
                         {selectedIds.has(p.id) ? (
-                          <CheckSquare size={18} className="text-primary mx-auto" />
+                          <CheckSquare size={18} className="text-[#FF1E27] mx-auto" />
                         ) : (
                           <Square size={18} className="text-slate-300 mx-auto" />
                         )}
@@ -241,7 +268,8 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
                           </div>
                         </div>
                       </td>
-                      <td className="p-3 font-medium">${formatPrice(p.price)}</td>
+                      <td className="p-3 font-medium text-slate-500">${formatPrice(p.cost || 0)}</td>
+                      <td className="p-3 font-black text-slate-800">${formatPrice(p.price)}</td>
                       <td className="p-3">
                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${p.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
                           {p.is_active ? 'Activo' : 'Oculto'}
@@ -251,7 +279,7 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
                   ))}
                   {filteredProducts.length === 0 && (
                     <tr>
-                      <td colSpan={4} className="p-8 text-center text-slate-500">No hay productos que coincidan con los filtros.</td>
+                      <td colSpan={5} className="p-8 text-center text-slate-500">No hay productos que coincidan con los filtros.</td>
                     </tr>
                   )}
                 </tbody>
@@ -262,42 +290,72 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
       </div>
 
       {/* Panel Derecho: Acción a Aplicar */}
-      <div className="w-full md:w-80 bg-white p-6 flex flex-col border-l border-slate-200">
+      <div className="w-full lg:w-96 bg-white p-6 flex flex-col border-l border-slate-200">
         <h3 className="font-bold text-lg text-slate-800 mb-6 flex items-center gap-2">
-          <Save size={20} className="text-primary" /> Acción Masiva
+          <Calculator size={20} className="text-[#FF1E27]" /> Manejador de Precios
         </h3>
         
-        <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-6 flex items-start gap-2">
-          <AlertCircle size={18} className="text-blue-500 shrink-0 mt-0.5" />
-          <p className="text-sm text-blue-700">
-            Tienes <strong className="font-black text-lg">{selectedIds.size}</strong> productos seleccionados.
+        <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-6 flex items-start gap-2">
+          <AlertCircle size={18} className="text-[#FF1E27] shrink-0 mt-0.5" />
+          <p className="text-sm text-slate-700">
+            Tienes <strong className="font-black text-lg text-[#FF1E27]">{selectedIds.size}</strong> productos seleccionados. Las reglas se aplican tomando como base el Costo.
           </p>
         </div>
 
         <div className="space-y-4 flex-1">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Operación a realizar</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Acción a realizar</label>
             <select 
               value={actionType}
               onChange={e => setActionType(e.target.value as any)}
-              className="w-full p-2 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:border-primary bg-slate-50"
+              className="w-full p-2 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:border-[#FF1E27] bg-white font-medium shadow-sm"
             >
-              <option value="price_rule">Regla de Precios (+3k / +20%)</option>
-              <option value="image">Asignar misma Imagen URL</option>
-              <option value="category">Cambiar Categoría</option>
-              <option value="status">Cambiar Estado</option>
+              <optgroup label="Reglas Automáticas">
+                <option value="price_rule_classic">Aplicar Regla Base (+3k / +20%)</option>
+              </optgroup>
+              <optgroup label="Suma / Resta Fija">
+                <option value="price_add_fixed">Sumar Monto Fijo al Costo ($)</option>
+                <option value="price_sub_fixed">Restar Monto Fijo al Costo ($)</option>
+              </optgroup>
+              <optgroup label="Porcentajes">
+                <option value="price_add_percent">Sumar Porcentaje al Costo (%)</option>
+                <option value="price_sub_percent">Restar Porcentaje al Costo (%)</option>
+              </optgroup>
+              <optgroup label="Manual">
+                <option value="price_set_fixed">Fijar Precio de Venta Exacto ($)</option>
+              </optgroup>
+              <optgroup label="Otros Atributos">
+                <option value="image">Asignar misma Imagen URL</option>
+                <option value="category">Cambiar Categoría</option>
+                <option value="status">Cambiar Estado</option>
+              </optgroup>
             </select>
           </div>
 
-          {actionType === 'price_rule' && (
-            <div className="bg-slate-50 p-3 rounded-lg text-xs text-slate-600 border border-slate-200">
-              <p className="font-bold mb-1">Regla aplicada:</p>
-              <ul className="list-disc pl-4 space-y-1">
-                <li>Si Precio &lt; $20,000 &rarr; Precio + $3,000</li>
-                <li>Si Precio &ge; $20,000 &rarr; Precio + 20%</li>
+          {actionType === 'price_rule_classic' && (
+            <div className="bg-slate-50 p-4 rounded-lg text-sm text-slate-600 border border-slate-200 shadow-inner">
+              <p className="font-bold mb-2">Resumen de la regla:</p>
+              <ul className="list-disc pl-4 space-y-2 font-medium">
+                <li>Si Costo &lt; $20,000 &rarr; <span className="text-[#FF1E27]">Costo + $3,000</span></li>
+                <li>Si Costo &ge; $20,000 &rarr; <span className="text-[#FF1E27]">Costo + 20%</span></li>
               </ul>
-              <p className="mt-2 text-slate-500 italic">* Se aplicará un redondeo automático.</p>
+              <p className="mt-3 text-xs text-slate-400 italic">El resultado final siempre se redondea hacia arriba.</p>
             </div>
+          )}
+
+          {actionType.startsWith('price_') && actionType !== 'price_rule_classic' && (
+             <div>
+               <label className="block text-sm font-medium text-slate-700 mb-1">
+                 {actionType.includes('percent') ? 'Porcentaje (Ej: 15)' : 'Monto (Ej: 5000)'}
+               </label>
+               <input 
+                 type="number"
+                 placeholder="0"
+                 value={actionValue}
+                 onChange={e => setActionValue(e.target.value)}
+                 className="w-full p-3 text-lg font-black border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:border-[#FF1E27]"
+               />
+             </div>
           )}
 
           {actionType === 'image' && (
@@ -308,7 +366,7 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
                 placeholder="https://..."
                 value={actionValue}
                 onChange={e => setActionValue(e.target.value)}
-                className="w-full p-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:border-primary"
+                className="w-full p-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:border-[#FF1E27]"
               />
               {actionValue && <img src={actionValue} alt="Preview" className="mt-2 h-20 rounded-lg object-cover border border-slate-200" />}
             </div>
@@ -320,7 +378,7 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
               <select 
                 value={actionValue}
                 onChange={e => setActionValue(e.target.value)}
-                className="w-full p-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:border-primary"
+                className="w-full p-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:border-[#FF1E27]"
               >
                 <option value="">- Elige -</option>
                 {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -337,10 +395,10 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
                   id="bulkActive" 
                   checked={actionValue2} 
                   onChange={e => setActionValue2(e.target.checked)} 
-                  className="w-4 h-4 text-primary rounded focus:ring-primary accent-primary" 
+                  className="w-4 h-4 text-[#FF1E27] rounded focus:ring-[#FF1E27] accent-[#FF1E27]" 
                 />
                 <label htmlFor="bulkActive" className="text-sm font-medium text-slate-700 cursor-pointer">
-                  Activo (Visible)
+                  Activo (Visible en la tienda)
                 </label>
               </div>
             </div>
@@ -349,10 +407,10 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
 
         <button 
           onClick={applyBulkAction}
-          disabled={selectedIds.size === 0 || isApplying || (actionType === 'category' && !actionValue) || (actionType === 'image' && !actionValue)}
-          className="w-full bg-primary hover:bg-primary-hover text-black font-bold py-3 rounded-xl mt-6 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+          disabled={selectedIds.size === 0 || isApplying || (actionType === 'category' && !actionValue) || (actionType === 'image' && !actionValue) || (actionType.startsWith('price_') && actionType !== 'price_rule_classic' && !actionValue)}
+          className="w-full bg-[#FF1E27] hover:bg-[#E61922] text-white font-black py-4 rounded-xl mt-6 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#FF1E27]/20 flex items-center justify-center gap-2"
         >
-          {isApplying ? 'Aplicando...' : `Aplicar a ${selectedIds.size} ítems`}
+          {isApplying ? 'Aplicando...' : <><Save size={18} /> Aplicar a {selectedIds.size} ítems</>}
         </button>
       </div>
 
