@@ -99,15 +99,15 @@ export default function BannerManager({ empresaSlug }: { empresaSlug: string }) 
   if (!empresaId) return <div className="p-8">Cargando gestor de banners...</div>;
 
   return (
-    <div className="p-8">
-      <header className="mb-8 flex justify-between items-center">
+    <div className="p-4 md:p-8">
+      <header className="mb-6 md:mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
           <h2 className="text-3xl font-bold text-slate-800">Gestión de Banners</h2>
           <p className="text-slate-500 mt-1">Administra los banners promocionales de tu catálogo.</p>
         </div>
         <button 
           onClick={openNewModal}
-          className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg shadow-sm font-medium transition-colors flex items-center gap-2"
+          className="bg-primary hover:bg-primary-hover text-white px-4 py-3 md:py-2 rounded-xl md:rounded-lg shadow-sm font-medium transition-colors flex items-center justify-center w-full md:w-auto gap-2"
         >
           <Plus size={20} />
           Nuevo Banner
@@ -151,8 +151,8 @@ export default function BannerManager({ empresaSlug }: { empresaSlug: string }) 
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-end md:items-center justify-center z-50 md:p-4">
+          <div className="bg-white rounded-t-3xl md:rounded-2xl shadow-xl w-full max-w-md p-6 pb-10 md:pb-6">
             <h3 className="text-xl font-bold mb-4">{editingBanner ? 'Editar Banner' : 'Agregar Banner'}</h3>
             <form onSubmit={handleSave} className="space-y-4">
               <div>

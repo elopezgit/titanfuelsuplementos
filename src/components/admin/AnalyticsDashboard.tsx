@@ -196,7 +196,7 @@ export default function AnalyticsDashboard({ empresaSlug }: { empresaSlug: strin
   };
 
   return (
-    <div className="p-8 pb-20">
+    <div className="p-4 md:p-8 pb-20">
       <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-bold text-slate-800">Analíticas Avanzadas</h2>

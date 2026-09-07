@@ -147,8 +147,8 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
   });
 
   return (
-    <div className="p-8">
-      <header className="mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+    <div className="p-4 md:p-8">
+      <header className="mb-6 md:mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
           <h2 className="text-3xl font-bold text-slate-800">Gestión de Catálogo</h2>
           <p className="text-slate-500 mt-1">Administra tus productos y categorías.</p>
@@ -246,68 +246,118 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
         </select>
       </div>
       
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 text-sm">
-            <tr>
-              <th className="p-4 font-medium">Producto</th>
-              <th className="p-4 font-medium">Categoría</th>
-              <th className="p-4 font-medium">Precio</th>
-              <th className="p-4 font-medium">Estado</th>
-              <th className="p-4 font-medium text-right">Acciones</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {filteredProducts.map(product => {
-              const cat = categories.find(c => c.id === product.category_id);
-              return (
-                <tr key={product.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="p-4 flex items-center gap-3">
-                    {product.image_url ? (
-                      <img src={product.image_url} alt={product.name} className="w-10 h-10 rounded-lg object-cover bg-slate-200 shrink-0" />
-                    ) : (
-                      <div className="w-10 h-10 rounded-lg bg-slate-200 shrink-0 flex items-center justify-center text-slate-400 text-xs">Sin foto</div>
-                    )}
-                    <div>
-                      <p className="font-semibold text-slate-800">{product.name} {product.code && <span className="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full ml-1">Cod: {product.code}</span>}</p>
-                      <p className="text-xs text-slate-500 truncate max-w-xs">{product.description}</p>
-                    </div>
-                  </td>
-                  <td className="p-4 text-slate-600">{cat ? cat.name : '-'}</td>
-                  <td className="p-4 font-bold text-slate-800">
-                    ${formatPrice(product.price)}
-                    {product.price_half && <span className="text-[#FF1E27] ml-2 font-black text-sm block">Oferta: ${formatPrice(product.price_half)}</span>}
-                  </td>
-                  <td className="p-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-bold ${product.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
+      <div className="bg-transparent md:bg-white md:rounded-xl md:shadow-sm md:border md:border-slate-200 overflow-hidden">
+        {/* Mobile View: Cards */}
+        <div className="grid grid-cols-1 gap-4 md:hidden">
+          {filteredProducts.map(product => {
+            const cat = categories.find(c => c.id === product.category_id);
+            return (
+              <div key={product.id} className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col gap-3">
+                <div className="flex items-start gap-3">
+                  {product.image_url ? (
+                    <img src={product.image_url} alt={product.name} className="w-16 h-16 rounded-lg object-cover bg-slate-200 shrink-0" />
+                  ) : (
+                    <div className="w-16 h-16 rounded-lg bg-slate-200 shrink-0 flex items-center justify-center text-slate-400 text-xs">Sin foto</div>
+                  )}
+                  <div className="flex-1">
+                    <p className="font-bold text-slate-800 text-lg leading-tight mb-1">{product.name}</p>
+                    {product.code && <span className="text-[10px] uppercase font-bold bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md mb-1 inline-block">Cod: {product.code}</span>}
+                    <p className="text-xs text-slate-500 font-medium">{cat ? cat.name : 'Sin categoría'}</p>
+                  </div>
+                </div>
+                
+                <div className="flex justify-between items-end mt-1 border-t border-slate-100 pt-3">
+                  <div>
+                    <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider mb-2 inline-block ${product.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
                       {product.is_active ? 'Activo' : 'Oculto'}
                     </span>
-                  </td>
-                  <td className="p-4 text-right">
-                    <button onClick={() => handleEdit(product)} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors mr-2">
+                    <p className="font-black text-slate-800 text-lg">
+                      ${formatPrice(product.price)}
+                    </p>
+                    {product.price_half && <p className="text-[#FF1E27] font-bold text-xs mt-0.5">Oferta: ${formatPrice(product.price_half)}</p>}
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <button onClick={() => handleEdit(product)} className="p-2.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors">
                       <Edit size={18} />
                     </button>
-                    <button onClick={() => handleDelete(product.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                    <button onClick={() => handleDelete(product.id)} className="p-2.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors">
                       <Trash2 size={18} />
                     </button>
-                  </td>
-                </tr>
-              );
-            })}
-            {filteredProducts.length === 0 && (
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          {filteredProducts.length === 0 && (
+            <div className="p-8 text-center bg-white rounded-xl border border-slate-200 text-slate-500">No hay productos que coincidan con la búsqueda.</div>
+          )}
+        </div>
+
+        {/* Desktop View: Table */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-left min-w-[600px]">
+            <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 text-sm">
               <tr>
-                <td colSpan={5} className="p-8 text-center text-slate-500">No hay productos que coincidan con la búsqueda.</td>
+                <th className="p-4 font-medium">Producto</th>
+                <th className="p-4 font-medium">Categoría</th>
+                <th className="p-4 font-medium">Precio</th>
+                <th className="p-4 font-medium">Estado</th>
+                <th className="p-4 font-medium text-right">Acciones</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filteredProducts.map(product => {
+                const cat = categories.find(c => c.id === product.category_id);
+                return (
+                  <tr key={product.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="p-4 flex items-center gap-3">
+                      {product.image_url ? (
+                        <img src={product.image_url} alt={product.name} className="w-10 h-10 rounded-lg object-cover bg-slate-200 shrink-0" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-lg bg-slate-200 shrink-0 flex items-center justify-center text-slate-400 text-xs">Sin foto</div>
+                      )}
+                      <div>
+                        <p className="font-semibold text-slate-800">{product.name} {product.code && <span className="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full ml-1">Cod: {product.code}</span>}</p>
+                        <p className="text-xs text-slate-500 truncate max-w-xs">{product.description}</p>
+                      </div>
+                    </td>
+                    <td className="p-4 text-slate-600">{cat ? cat.name : '-'}</td>
+                    <td className="p-4 font-bold text-slate-800">
+                      ${formatPrice(product.price)}
+                      {product.price_half && <span className="text-[#FF1E27] ml-2 font-black text-sm block">Oferta: ${formatPrice(product.price_half)}</span>}
+                    </td>
+                    <td className="p-4">
+                      <span className={`px-2 py-1 rounded-full text-xs font-bold ${product.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
+                        {product.is_active ? 'Activo' : 'Oculto'}
+                      </span>
+                    </td>
+                    <td className="p-4 text-right">
+                      <button onClick={() => handleEdit(product)} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors mr-2">
+                        <Edit size={18} />
+                      </button>
+                      <button onClick={() => handleDelete(product.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                        <Trash2 size={18} />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+              {filteredProducts.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-slate-500">No hay productos que coincidan con la búsqueda.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
       </>
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-end md:items-center justify-center z-50 md:p-4">
+          <div className="bg-white rounded-t-3xl md:rounded-2xl shadow-xl w-full max-w-md p-6 max-h-[90vh] h-[90vh] md:h-auto overflow-y-auto">
             <h3 className="text-xl font-bold mb-4 text-slate-800">{formData.id ? 'Editar Producto' : 'Agregar Producto'}</h3>
             <form onSubmit={handleSave} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">

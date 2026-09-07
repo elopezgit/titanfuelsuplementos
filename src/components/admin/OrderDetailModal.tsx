@@ -145,8 +145,8 @@ export default function OrderDetailModal({ order, onClose, onStatusChange, onDel
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-[200]">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-end md:items-center justify-center md:p-4 z-[200]">
+      <div className="bg-white rounded-t-3xl md:rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col h-[90vh] md:h-auto md:max-h-[90vh]">
         {/* Header */}
         <div className="bg-slate-900 p-6 flex justify-between items-start text-white">
           <div>

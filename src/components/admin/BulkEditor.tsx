@@ -228,8 +228,8 @@ export default function BulkEditor({ empresaId, products: initialProducts, categ
 
         <div className="flex-1 overflow-y-auto bg-slate-50 relative p-4 h-[500px]">
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm h-full flex flex-col">
-            <div className="overflow-y-auto flex-1">
-              <table className="w-full text-left text-sm relative">
+            <div className="overflow-y-auto overflow-x-auto flex-1 custom-scrollbar">
+              <table className="w-full text-left text-sm relative min-w-[600px]">
                 <thead className="bg-slate-100 border-b border-slate-200 text-slate-600 sticky top-0 z-10 shadow-sm">
                   <tr>
                     <th className="p-3 w-12 text-center cursor-pointer hover:bg-slate-200 transition-colors" onClick={handleSelectAll}>

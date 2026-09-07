@@ -110,24 +110,24 @@ export default function KanbanBoard({ empresaSlug, role }: { empresaSlug: string
   if (!empresaId) return <div className="p-8">Cargando tablero...</div>;
 
   return (
-    <div className="p-8 h-screen flex flex-col">
-      <header className="mb-8 flex justify-between items-end shrink-0">
+    <div className="p-4 md:p-8 h-full flex flex-col">
+      <header className="mb-6 md:mb-8 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 shrink-0">
         <div>
-          <h2 className="text-3xl font-bold text-slate-800">Tablero de Pedidos</h2>
-          <p className="text-slate-500 mt-1">Arrastra las tarjetas para cambiar su estado.</p>
+          <h2 className="text-2xl md:text-3xl font-bold text-slate-800">Tablero de Pedidos</h2>
+          <p className="text-slate-500 mt-1 text-sm md:text-base">Arrastra las tarjetas para cambiar su estado.</p>
         </div>
-        <button onClick={() => fetchOrders(empresaId)} className="text-sm bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded font-medium transition-colors">
+        <button onClick={() => fetchOrders(empresaId)} className="text-sm bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-lg font-medium transition-colors w-full sm:w-auto">
           🔄 Refrescar
         </button>
       </header>
       
-      <div className="flex-1 overflow-x-auto">
+      <div className="flex-1 overflow-x-auto hide-scrollbar md:custom-scrollbar snap-x snap-mandatory px-4 md:px-0 pb-6">
         <DragDropContext onDragEnd={onDragEnd}>
-          <div className="flex gap-6 h-full items-start min-w-max">
+          <div className="flex gap-4 md:gap-6 h-full items-start w-max md:min-w-max">
             {COLUMNS.map(col => {
               const columnOrders = orders.filter(o => o.status === col.id);
               return (
-                <div key={col.id} className="w-80 bg-slate-200/50 rounded-xl p-4 flex flex-col max-h-full">
+                <div key={col.id} className="w-[85vw] sm:w-[320px] md:w-80 shrink-0 snap-center bg-slate-200/50 rounded-2xl p-4 flex flex-col max-h-[75vh] md:max-h-full border border-slate-300/30 shadow-sm">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="font-bold text-slate-700">{col.title}</h3>
                     <span className="bg-slate-300 text-slate-700 text-xs font-bold px-2 py-1 rounded-full">{columnOrders.length}</span>
