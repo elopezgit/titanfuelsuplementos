@@ -65,16 +65,16 @@ export default function ProductModal({ product, isOpen, onClose, onAddToCart }: 
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="fixed bottom-0 left-0 right-0 z-[101] bg-[#13131F] text-white rounded-t-3xl overflow-hidden flex flex-col max-h-[90vh] md:max-w-md md:mx-auto md:bottom-4 md:rounded-3xl shadow-2xl border border-red-500/30"
           >
-            <div className="relative h-64 bg-black shrink-0">
+            <div className="relative h-64 bg-black/90 shrink-0 flex items-center justify-center p-4">
               {/* Drag Handle Visual */}
               <div className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-white/30 rounded-full z-20 backdrop-blur-sm"></div>
               <img 
-                src={product.image_url || `https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&q=80`} 
+                src={product.image_url || `/img/products/p1_1.png`} 
                 alt={product.name}
                 loading="lazy"
-                className="w-full h-full object-cover opacity-50"
+                className="max-h-full max-w-full object-contain drop-shadow-xl z-10"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#13131F] via-black/30 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#13131F] via-transparent to-transparent pointer-events-none"></div>
               
               {/* Brand Official Overlay Seal */}
               <div className="absolute bottom-4 left-6 z-10 flex flex-col items-start gap-1">

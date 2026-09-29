@@ -313,9 +313,9 @@ export default function CatalogManager({ empresaSlug }: { empresaSlug: string })
                   <tr key={product.id} className="hover:bg-slate-50 transition-colors">
                     <td className="p-4 flex items-center gap-3">
                       {product.image_url ? (
-                        <img src={product.image_url} alt={product.name} className="w-10 h-10 rounded-lg object-cover bg-slate-200 shrink-0" />
+                        <img src={product.image_url} alt={product.name} className="w-12 h-12 rounded-lg object-contain bg-slate-100 border border-slate-200 p-1 shrink-0" />
                       ) : (
-                        <div className="w-10 h-10 rounded-lg bg-slate-200 shrink-0 flex items-center justify-center text-slate-400 text-xs">Sin foto</div>
+                        <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 shrink-0 flex items-center justify-center text-slate-400 text-xs">Sin foto</div>
                       )}
                       <div>
                         <p className="font-semibold text-slate-800">{product.name} {product.code && <span className="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full ml-1">Cod: {product.code}</span>}</p>

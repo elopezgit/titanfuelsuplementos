@@ -10,6 +10,10 @@ function App() {
         {/* Redirigir la raíz a /titanfuel */}
         <Route path="/" element={<Navigate to="/titanfuel" replace />} />
         
+        {/* Redirigir /admin a /admin/titanfuel */}
+        <Route path="/admin" element={<Navigate to="/admin/titanfuel" replace />} />
+        <Route path="/admin/" element={<Navigate to="/admin/titanfuel" replace />} />
+
         {/* Rutas Multi-Tenant (segmentadas por empresa) */}
         <Route path="/:empresaSlug" element={
           <CartProvider>

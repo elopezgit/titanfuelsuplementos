@@ -1,51 +1,22 @@
 # Perfil del Proyecto
 
 ## Información general
-- **Nombre**: [Nombre del proyecto]
-- **Dominio**: [eCommerce / Fintech / SaaS / Travel / Collections / etc.]
-- **Stack principal**: [Backend / Frontend / DB / Cloud]
-- **Equipo**: [Tamaño, roles]
-- **Stakeholders**: [PO, Tech Lead, Cliente]
+- **Nombre**: Titan Fuel Suplementos
+- **Dominio**: eCommerce / Suplementación Deportiva y Nutrición
+- **Stack principal**: React 19 + Vite + TailwindCSS + Supabase
+- **Empresa ID (Supabase)**: `20087e44-b072-44ca-9136-32bc8f9ad94b`
 
 ## Objetivos de negocio
-1. [Objetivo 1]
-2. [Objetivo 2]
+1. Catálogo digital y punto de venta para suplementación deportiva
+2. Gestión de productos con imágenes reales y descripciones nutricionales profesionales
 
 ## Arquitectura
-- **Estilo**: [Monolito / Microservicios / Modular Monolith]
-- **Frontend**: [React / Angular / Blazor / etc.]
-- **Backend**: [.NET / Node / Java / Python / Go]
-- **Base de datos**: [PostgreSQL / SQL Server / MongoDB]
-- **Cloud**: [Azure / AWS / GCP / On-premise]
-- **Decisiones clave**: [ADR refs]
+- **Frontend**: React 19 + TypeScript + Vite + TailwindCSS
+- **Backend / Base de datos**: Supabase (PostgreSQL + RLS multi-tenant)
+- **Multi-Tenant**: Aislamiento estricto por `empresa_id`
 
-## Estado del proyecto
-- **Estado general**: [En curso / En pausa / Bloqueado]
-- **Fase**: [Inicio / Desarrollo / Producción / Mantenimiento]
-- **Sprint actual**: [#]
-- **Progreso**: [%]
-- **CI/CD**: [Configurado / No configurado]
-- **Monitoreo**: [Configurado / No configurado]
+## Estado del catálogo
+- **Productos activos**: 446 productos
+- **Imágenes asignadas**: 446 / 446 (URLs verificadas)
+- **Descripciones**: 446 / 446 (Fichas técnicas y nutricionales profesionales)
 
-## Calidad
-- **Cobertura de pruebas**: [%]
-- **Deuda técnica estimada**: [Alta / Media / Baja]
-- **Documentación**: [Completa / Parcial / Inexistente]
-
-## Integraciones externas
-| Sistema | Propósito | Tipo |
-|---|---|---|
-| | | API / DB / Archivo |
-
-## Restricciones conocidas
-- [Presupuesto, plazo, recursos, compliance]
-
-## Bloqueos activos
-| Bloqueo | Impacto | Dueño | Estado |
-|---|---|---|---|
-| | | | |
-
-## Próximos hitos
-| Hito | Fecha | Dependencias |
-|---|---|---|
-| | | |

@@ -698,35 +698,36 @@ export default function ClientHome() {
                         </div>
 
                         {/* Image & Official Brand Seal Area (Right) */}
-                        <div className="w-28 h-28 sm:w-32 sm:h-32 shrink-0 bg-black/40 rounded-xl relative overflow-hidden shadow-inner border border-white/5 group-hover:border-white/10 transition-all flex flex-col justify-between p-2">
+                        <div className="w-28 h-28 sm:w-32 sm:h-32 shrink-0 bg-black/60 rounded-xl relative overflow-hidden shadow-inner border border-white/10 group-hover:border-[#FF1E27]/40 transition-all flex flex-col justify-between p-1.5">
                           {/* Top Tag */}
-                          <div className="z-10 flex justify-end w-full">
-                            <span className="bg-black/60 backdrop-blur-sm text-slate-300 font-bold text-[9px] px-1.5 py-0.5 rounded border border-white/10 tracking-[0.1em] uppercase">
+                          <div className="z-20 flex justify-between items-center w-full px-1">
+                            <span className="bg-black/70 backdrop-blur-sm text-slate-300 font-bold text-[8px] px-1.5 py-0.5 rounded border border-white/10 tracking-[0.1em] uppercase">
                               OFICIAL
                             </span>
                           </div>
 
-                          {/* Center Official Brand Logo */}
-                          <div className="z-10 my-auto flex justify-center w-full">
-                            <BrandLogo brand={brand} size="sm" />
-                          </div>
-
-                          {/* Background image with overlay */}
-                          {product.image_url && (
-                            <img 
-                              src={product.image_url} 
-                              alt={product.name}
-                              loading="lazy"
-                              className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-screen group-hover:scale-110 transition-transform duration-500"
-                            />
+                          {/* Product Image or Brand Logo Fallback */}
+                          {product.image_url ? (
+                            <div className="absolute inset-0 p-2 flex items-center justify-center">
+                              <img 
+                                src={product.image_url} 
+                                alt={product.name}
+                                loading="lazy"
+                                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-md"
+                              />
+                            </div>
+                          ) : (
+                            <div className="z-10 my-auto flex justify-center w-full">
+                              <BrandLogo brand={brand} size="sm" />
+                            </div>
                           )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
                           {/* Add Button inside image corner - Touch Optimized */}
                           <button 
-                            className="absolute bottom-1.5 right-1.5 z-20 w-10 h-10 flex items-center justify-center bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white shadow-lg active:scale-[0.85] hover:bg-[#FF1E27] transition-all"
+                            className="absolute bottom-1.5 right-1.5 z-20 w-9 h-9 flex items-center justify-center bg-black/70 backdrop-blur-md border border-white/20 rounded-xl text-white shadow-lg active:scale-[0.85] hover:bg-[#FF1E27] transition-all"
                           >
-                            <Plus size={20} strokeWidth={2.5} />
+                            <Plus size={18} strokeWidth={2.5} />
                           </button>
                         </div>
                       </motion.div>
